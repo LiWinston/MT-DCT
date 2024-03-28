@@ -88,6 +88,14 @@ public class Dict {
     }
 
     public boolean add(String word, String meanings) {
+        if(dictionary.containsKey(word)) {
+            //TODO: Log to client
+            return false;
+        }
+        if(meanings.isEmpty()) {
+            //TODO: Log to client
+            return false;
+        }
 //        System.out.println("Now adding: " + word);
         PriorityQueue<String> meaningsQueue = new PriorityQueue<>(MEANINGQUEUECOMPARATOR);
         String[] meaningsArray = meanings.split(";");
