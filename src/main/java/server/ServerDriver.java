@@ -7,7 +7,7 @@ public class ServerDriver {
         String dictFile = null;
 
         if (args.length < 2) {
-            ServerLogger.logGeneralErr("Usage: java -jar server.jar <port> <dictionary file>");
+            ServerLogger.logGeneralErr("Expected arguments: “port” “Dict file PATH”");
             System.exit(1);
         }
 
