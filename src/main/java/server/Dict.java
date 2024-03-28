@@ -12,12 +12,7 @@ public class Dict {
 
     private final ConcurrentHashMap<String, PriorityQueue<String>> dictionary;
     Comparator<String> MEANINGQUEUECOMPARATOR = Comparator.comparingInt(String::length);
-
-    /**
-     * Construct the initial dictionary
-     *
-     * @param filePath the file of initial dictionary inputs
-     */
+    
     public Dict(String filePath) {
         dictionary = new ConcurrentHashMap<>();
         // Load current records from the file
@@ -46,12 +41,6 @@ public class Dict {
         }
     }
 
-    /**
-     * Search a word in the dictionary
-     *
-     * @param word the word to search
-     * @return the meanings of this word, or null if not exist
-     */
     public String search(String word) {
         System.out.println("Now searching: " + word);
         PriorityQueue<String> q = dictionary.get(word);
@@ -61,13 +50,6 @@ public class Dict {
         return String.join(";", q);
     }
 
-    /**
-     * Add a new word to this dictionary. Check if it already exists
-     *
-     * @param word     the word to add
-     * @param meanings the meaning of the word. Should be non-empty
-     * @return whether successfully added or the word already exists
-     */
     public boolean add(String word, String meanings) {
         System.out.println("Now adding: " + word);
         PriorityQueue<String> meaningsQueue = new PriorityQueue<>(MEANINGQUEUECOMPARATOR);
@@ -81,25 +63,12 @@ public class Dict {
         return dictionary.putIfAbsent(word, meaningsQueue) == null;
     }
 
-    /**
-     * Delete a word from the dictionary. Check if it exists
-     *
-     * @param word the word to delete
-     * @return whether successfully deleted or the word doesn't exist
-     */
     public boolean delete(String word) {
         System.out.println("Now deleting: " + word);
         // If the word doesn't exist, return false; otherwise delete it from the dictionary, return true
         return dictionary.remove(word) != null;
     }
 
-    /**
-     * Edit an existing word's meanings.
-     *
-     * @param word     the word to edit
-     * @param meanings the new meanings
-     * @return whether successfully updated or the word doesn't exist
-     */
     public boolean update(String word, String meanings) {
         System.out.println("Now updating: " + word);
         PriorityQueue<String> meaningsQueue = new PriorityQueue<>(MEANINGQUEUECOMPARATOR);
