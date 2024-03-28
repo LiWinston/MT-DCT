@@ -3,6 +3,7 @@ package server;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Dict {
     private static ConcurrentHashMap<String, PriorityQueue<String>> dictionary;
@@ -56,6 +57,7 @@ public class Dict {
         Dict dict = new Dict("dictionary.txt");
         System.out.println(dict.search("banana"));
         System.out.println(dict.add("appleLLL", "a fruit"));
+        System.out.println(dict.add("appleLLL", "a"));
         System.out.println(dict.update("appleLLL", "a kind of fruit"));
         dict.printDictionaryInfo();
         dict.close();
@@ -100,25 +102,27 @@ public class Dict {
     }
 
     public boolean add(String word, String meanings) {
-        if (dictionary.containsKey(word)) {
-            //TODO: Log to client
-            return false;
-        }
         if (meanings.isEmpty()) {
-            //TODO: Log to client
+            // TODO: Log to client
             return false;
         }
-//        System.out.println("Now adding: " + word);
+
+        // Use computeIfAbsent to atomically add the word and its meanings to the dictionary
         PriorityQueue<String> meaningsQueue = new PriorityQueue<>(MEANINGQUEUECOMPARATOR);
         String[] meaningsArray = meanings.split(";");
+        if (meaningsArray.length == 0) {
+            return false;
+        }
         for (String meaning : meaningsArray) {
             if (!meaning.isEmpty()) {
                 meaningsQueue.add(meaning);
             }
         }
-        // If the word already exists, return false; otherwise add it to the dictionary, return true
+
+        // Use computeIfAbsent to atomically add the word and its meanings to the dictionary
         return dictionary.putIfAbsent(word, meaningsQueue) == null;
     }
+
 
     public boolean delete(String word) {
 //        System.out.println("Now deleting: " + word);
@@ -127,21 +131,34 @@ public class Dict {
     }
 
     public boolean update(String word, String meanings) {
-//        System.out.println("Now updating: " + word);
-        PriorityQueue<String> meaningsQueue = new PriorityQueue<>(MEANINGQUEUECOMPARATOR);
-        String[] meaningsArray = meanings.split(";");
-        for (String meaning : meaningsArray) {
-            if (!meaning.isEmpty()) {
-                if (dictionary.get(word).contains(meaning)) {
-                    continue;
-                }
-                meaningsQueue.add(meaning);
-            }
+        if (meanings.isEmpty()) {
+            return false; // if the new meanings are empty, return false
         }
-        // If the word doesn't exist, return false; otherwise update it in the dictionary, return true
-        meaningsQueue.addAll(dictionary.get(word));
-        return dictionary.replace(word, meaningsQueue) != null;
+        AtomicBoolean isNoNewMeaning = new AtomicBoolean(false);
+        // update the meanings of the word in an atomic way by a lambda function
+        PriorityQueue<String> updatedMeanings = dictionary.computeIfPresent(word, (key, oldValue) -> {
+
+            //create a new priority queue to store the updated meanings
+            PriorityQueue<String> newMeanings = new PriorityQueue<>(MEANINGQUEUECOMPARATOR);
+            String[] newMeaningsArray = meanings.split(";");
+            for (String newMeaning : newMeaningsArray) {
+                if (!newMeaning.isEmpty() && !oldValue.contains(newMeaning)) {
+                    //if the new meaning is not empty and not in the old meanings, add it to the new meanings
+                    newMeanings.add(newMeaning);
+                }
+            }
+            if(newMeanings.isEmpty()){
+                isNoNewMeaning.set(true);
+                //TODO: Log to client: "No new meaning to update"
+            }
+            // add the old meanings to the new meanings
+            newMeanings.addAll(oldValue);
+            return newMeanings;
+        });
+
+        return (updatedMeanings != null) && !isNoNewMeaning.get();
     }
+
 
     // Method to save dictionary content to file
     public void saveToFile() {
