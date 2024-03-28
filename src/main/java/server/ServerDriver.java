@@ -5,6 +5,7 @@ public class ServerDriver {
     public static void main(String[] args) {
         int port = DefaultPORT;
         String dictFile = null;
+        String DEFAULTFILE = "dictionary.txt";
 
         if (args.length < 2) {
             ServerLogger.logGeneralErr("Expected arguments: “port” “Dict file PATH”");
@@ -19,6 +20,9 @@ public class ServerDriver {
         }
 
         dictFile = args[1];
+        if(dictFile == null) {
+            dictFile = DEFAULTFILE;
+        }
         Dict dict = new Dict(dictFile);
     }
 }
