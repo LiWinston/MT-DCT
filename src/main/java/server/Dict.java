@@ -15,7 +15,7 @@ public class Dict {
         // Load current records from the file
         try (BufferedReader bufferedReader =
                      new BufferedReader(new InputStreamReader(
-                             Objects.requireNonNull(getClass().getResourceAsStream(filePath))))) {
+                             new FileInputStream(filePath)))) {
             String line;
 
             // Read the first line separately
@@ -64,8 +64,15 @@ public class Dict {
     }
 
     private void processLine(String line) {
+        if (line == null) {
+            return;
+        }
         // Split the word and meanings by ":"
         String[] split = line.split(":");
+        if (split.length != 2) return;
+
+        System.out.println("split: " + Arrays.toString(split));
+
         PriorityQueue<String> meaningsQueue = new PriorityQueue<>(MEANINGQUEUECOMPARATOR);
         // Split the meanings by ";"
         String[] meaningsArray = split[1].split(";");
@@ -88,11 +95,11 @@ public class Dict {
     }
 
     public boolean add(String word, String meanings) {
-        if(dictionary.containsKey(word)) {
+        if (dictionary.containsKey(word)) {
             //TODO: Log to client
             return false;
         }
-        if(meanings.isEmpty()) {
+        if (meanings.isEmpty()) {
             //TODO: Log to client
             return false;
         }
@@ -120,7 +127,7 @@ public class Dict {
         String[] meaningsArray = meanings.split(";");
         for (String meaning : meaningsArray) {
             if (!meaning.isEmpty()) {
-                if(dictionary.get(word).contains(meaning)) {
+                if (dictionary.get(word).contains(meaning)) {
                     continue;
                 }
                 meaningsQueue.add(meaning);

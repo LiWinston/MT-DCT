@@ -1,1 +1,4 @@
+banana: a long fruit; a yellow fruit; a sweet fruit
+date: a brown fruit; a small fruit; a sweet fruit
+cherry: a red fruit; a small fruit; a sour fruit
 apple:a xxxl fruit; a sweet fruit;aaaaa aaa aa big fruit
