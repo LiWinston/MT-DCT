@@ -1,5 +1,5 @@
 package server;
-public class Server {
+public class ServerDriver {
     public static final int DefaultPORT = 8888;
 
     public static void main(String[] args) {

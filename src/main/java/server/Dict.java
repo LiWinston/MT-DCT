@@ -12,7 +12,7 @@ public class Dict {
 
     private final ConcurrentHashMap<String, PriorityQueue<String>> dictionary;
     Comparator<String> MEANINGQUEUECOMPARATOR = Comparator.comparingInt(String::length);
-    
+
     public Dict(String filePath) {
         dictionary = new ConcurrentHashMap<>();
         // Load current records from the file
