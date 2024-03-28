@@ -48,7 +48,7 @@ public class Dict {
     public static void main(String[] args) {
         Dict dict = new Dict("dictionary.txt");
 //        dict.search("apple");
-        dict.add("apple", "a big fruit");
+        dict.add("apple", "aaaaa aaa aa big fruit");
         dict.search("apple");
         dict.add("apple", "a fruit");
 //        dict.delete("apple");
@@ -88,6 +88,14 @@ public class Dict {
     }
 
     public boolean add(String word, String meanings) {
+        if(dictionary.containsKey(word)) {
+            //TODO: Log to client
+            return false;
+        }
+        if(meanings.isEmpty()) {
+            //TODO: Log to client
+            return false;
+        }
 //        System.out.println("Now adding: " + word);
         PriorityQueue<String> meaningsQueue = new PriorityQueue<>(MEANINGQUEUECOMPARATOR);
         String[] meaningsArray = meanings.split(";");
@@ -112,10 +120,14 @@ public class Dict {
         String[] meaningsArray = meanings.split(";");
         for (String meaning : meaningsArray) {
             if (!meaning.isEmpty()) {
+                if(dictionary.get(word).contains(meaning)) {
+                    continue;
+                }
                 meaningsQueue.add(meaning);
             }
         }
         // If the word doesn't exist, return false; otherwise update it in the dictionary, return true
+        meaningsQueue.addAll(dictionary.get(word));
         return dictionary.replace(word, meaningsQueue) != null;
     }
 
