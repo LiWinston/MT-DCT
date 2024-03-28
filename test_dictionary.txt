@@ -1,2 +1,0 @@
-testInit:measures;dds;qwwq
-testInit2:measures1;dds2;qwwq3

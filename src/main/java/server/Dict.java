@@ -1,21 +1,16 @@
 package server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Dict {
-
     private final ConcurrentHashMap<String, PriorityQueue<String>> dictionary;
-    public Map<String, PriorityQueue<String>> getDictionary() {
-        return Collections.unmodifiableMap(dictionary);
-    }
-
+    private final String filePath;
     Comparator<String> MEANINGQUEUECOMPARATOR = Comparator.comparingInt(String::length);
 
     public Dict(String filePath) {
+        this.filePath = filePath;
         dictionary = new ConcurrentHashMap<>();
         // Load current records from the file
         try (BufferedReader bufferedReader =
@@ -36,10 +31,36 @@ public class Dict {
                 processLine(line);
             }
         } catch (NullPointerException e) {
-            ServerLogger.logGeneralErr("Invalid file path ----" + e.getMessage());
+            ServerLogger.logGeneralErr(STR."Invalid file path ----\{e.getMessage()}");
+            try {
+                File file = new File(filePath);
+                if (file.createNewFile()) {
+                    ServerLogger.logGeneralErr(STR."File created: \{file.getName()}");
+                }
+            } catch (IOException ioException) {
+                ServerLogger.logGeneralErr(STR."An error occurred ----\{ioException.getMessage()}");
+            }
         } catch (IOException e) {
-            ServerLogger.logGeneralErr("File Reading fail ----" + e.getMessage());
+            ServerLogger.logGeneralErr(STR."File Reading fail ----\{e.getMessage()}");
         }
+    }
+
+    public static void main(String[] args) {
+        Dict dict = new Dict("dictionary.txt");
+//        dict.search("apple");
+        dict.add("apple", "a big fruit");
+        dict.search("apple");
+        dict.add("apple", "a fruit");
+//        dict.delete("apple");
+        dict.search("apple");
+        dict.update("apple", "a xxxl fruit; a sweet fruit");
+        dict.search("apple");
+        dict.printDictionaryInfo();
+        dict.close();
+    }
+
+    public Map<String, PriorityQueue<String>> getDictionary() {
+        return Collections.unmodifiableMap(dictionary);
     }
 
     private void processLine(String line) {
@@ -96,5 +117,30 @@ public class Dict {
         }
         // If the word doesn't exist, return false; otherwise update it in the dictionary, return true
         return dictionary.replace(word, meaningsQueue) != null;
+    }
+
+    // Method to save dictionary content to file
+    public void saveToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            for (Map.Entry<String, PriorityQueue<String>> entry : dictionary.entrySet()) {
+                writer.write(entry.getKey() + ":" + String.join(";", entry.getValue()));
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            ServerLogger.logGeneralErr("Error saving to file: " + e.getMessage());
+        }
+    }
+
+    private void printDictionaryInfo() {
+        System.out.println("Dictionary Information:");
+        for (String word : dictionary.keySet()) {
+            System.out.println("Word: " + word + ", Meanings: " + search(word));
+        }
+        System.out.println();
+    }
+
+    // Method to close the dictionary and save content to file
+    public void close() {
+        saveToFile();
     }
 }

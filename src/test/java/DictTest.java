@@ -1,19 +1,33 @@
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import server.Dict;
-import server.ServerLogger;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.PriorityQueue;
 
 import static org.junit.Assert.*;
 
 public class DictTest {
 
-    ServerLogger serverLogger;
-
+    private static final String TEST_FILE_PATH = "test_dictionary.txt";
     private Dict dict;
 
     @Before
     public void setUp() {
-        dict = new Dict("test_dictionary.txt"); // Assuming a test dictionary file exists
+        // Create a test dictionary file
+        createTestDictionaryFile();
+        // Initialize the dictionary with the test file
+        dict = new Dict(TEST_FILE_PATH);
+    }
+
+    @After
+    public void tearDown() {
+        // Close the dictionary to save content to file
+        dict.close();
+        // Delete the test dictionary file
+        deleteTestDictionaryFile();
     }
 
     @Test
@@ -22,7 +36,6 @@ public class DictTest {
         assertNull(dict.search(word)); // Word doesn't exist in the dictionary
         dict.add(word, "meaning1;meaning2");
         assertEquals("meaning1;meaning2", dict.search(word)); // Word exists, test search functionality
-        printDictionaryInfo();
     }
 
     @Test
@@ -30,7 +43,6 @@ public class DictTest {
         String word = "test";
         assertTrue(dict.add(word, "meaning1;meaning2")); // Add new word to dictionary
         assertFalse(dict.add(word, "meaning3")); // Word already exists, should return false
-        printDictionaryInfo();
     }
 
     @Test
@@ -40,7 +52,6 @@ public class DictTest {
         dict.add(word, "meaning1");
         assertTrue(dict.delete(word)); // Word exists, should return true after deletion
         assertNull(dict.search(word)); // Word should no longer exist in the dictionary
-        printDictionaryInfo();
     }
 
     @Test
@@ -50,15 +61,29 @@ public class DictTest {
         dict.add(word, "meaning1");
         assertTrue(dict.update(word, "newmeaning")); // Update existing word, should return true
         assertEquals("newmeaning", dict.search(word)); // Verify word has been updated
-        printDictionaryInfo();
     }
 
-    // Helper method to print dictionary information
-    private void printDictionaryInfo() {
-        System.out.println("Dictionary Information:");
-        for (String word : dict.getDictionary().keySet()) {
-            System.out.println("Word: " + word + ", Meanings: " + dict.search(word));
+    // Helper method to create a test dictionary file
+    private void createTestDictionaryFile() {
+        try {
+            File file = new File(TEST_FILE_PATH);
+            if (file.createNewFile()) {
+                // Write some initial data to the test file
+                Dict testDict = new Dict(TEST_FILE_PATH);
+                testDict.add("test", "meaning1;meaning2");
+                testDict.add("test2", "meaning3;meaning4");
+                testDict.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        System.out.println();
+    }
+
+    // Helper method to delete the test dictionary file
+    private void deleteTestDictionaryFile() {
+        File file = new File(TEST_FILE_PATH);
+        if (file.exists()) {
+            file.delete();
+        }
     }
 }
