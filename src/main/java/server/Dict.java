@@ -5,11 +5,15 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Dict {
-    private final ConcurrentHashMap<String, PriorityQueue<String>> dictionary;
+    private static ConcurrentHashMap<String, PriorityQueue<String>> dictionary;
     private final String filePath;
     Comparator<String> MEANINGQUEUECOMPARATOR = Comparator.comparingInt(String::length);
 
     public Dict(String filePath) {
+        if(dictionary != null) {
+            throw new IllegalStateException("Already initialized an instance of Dict");
+        }
+
         this.filePath = filePath;
         dictionary = new ConcurrentHashMap<>();
         // Load current records from the file
@@ -32,6 +36,10 @@ public class Dict {
             }
         } catch (NullPointerException e) {
             ServerLogger.logGeneralErr(STR."Invalid file path ----\{e.getMessage()}");
+            e.printStackTrace();
+        } catch (IOException e) {
+            ServerLogger.logGeneralErr(STR."File Reading fail ----\{e.getMessage()}");
+            e.printStackTrace();
             try {
                 File file = new File(filePath);
                 if (file.createNewFile()) {
@@ -39,22 +47,16 @@ public class Dict {
                 }
             } catch (IOException ioException) {
                 ServerLogger.logGeneralErr(STR."An error occurred ----\{ioException.getMessage()}");
+                //stop exception
             }
-        } catch (IOException e) {
-            ServerLogger.logGeneralErr(STR."File Reading fail ----\{e.getMessage()}");
         }
     }
 
     public static void main(String[] args) {
         Dict dict = new Dict("dictionary.txt");
-//        dict.search("apple");
-        dict.add("apple", "aaaaa aaa aa big fruit");
-        dict.search("apple");
-        dict.add("apple", "a fruit");
-//        dict.delete("apple");
-        dict.search("apple");
-        dict.update("apple", "a xxxl fruit; a sweet fruit");
-        dict.search("apple");
+        System.out.println(dict.search("banana"));
+        System.out.println(dict.add("appleLLL", "a fruit"));
+        System.out.println(dict.update("appleLLL", "a kind of fruit"));
         dict.printDictionaryInfo();
         dict.close();
     }
@@ -69,9 +71,12 @@ public class Dict {
         }
         // Split the word and meanings by ":"
         String[] split = line.split(":");
-        if (split.length != 2) return;
 
-        System.out.println("split: " + Arrays.toString(split));
+        if (split.length != 2) {
+            // Handle the case where the line does not have correct format
+            ServerLogger.logGeneralErr("Invalid line format: " + line);
+            return;
+        }
 
         PriorityQueue<String> meaningsQueue = new PriorityQueue<>(MEANINGQUEUECOMPARATOR);
         // Split the meanings by ";"
@@ -150,7 +155,7 @@ public class Dict {
         }
     }
 
-    private void printDictionaryInfo() {
+    void printDictionaryInfo() {
         System.out.println("Dictionary Information:");
         for (String word : dictionary.keySet()) {
             System.out.println("Word: " + word + ", Meanings: " + search(word));
