@@ -51,6 +51,7 @@ public class Dict {
                 //stop exception
             }
         }
+        System.out.println("Dictionary init successfully!");
     }
 
     public static void main(String[] args) {
