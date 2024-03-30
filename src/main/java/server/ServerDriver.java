@@ -30,14 +30,15 @@ public class ServerDriver {
         dictFile = args[1];
 
         Dict dict = new Dict(dictFile);
+        System.out.println(STR."Server started listening on port: \{port}");
         try (ServerSocket serverSocket = new ServerSocket(port)) {
 //            serverSocket.setSoTimeout(90000);
             dict.add("server", serverSocket.toString());
-            while (connectedClients < 10) {
+            while (true) {
                 Socket clientSocket = serverSocket.accept();
-                dict.add(String.valueOf(connectedClients++), clientSocket.toString());
+                //待架构设计，倾向于虚拟线程 + Thread per request
+                dict.saveToFile();
             }
-            dict.close();
         }catch (IOException ioe) {
             ServerLogger.logGeneralErr(STR."Could not listen on port: \{port}");
             System.exit(1);

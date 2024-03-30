@@ -27,7 +27,7 @@ public class Client {
         try {
             client.port = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            System.out.println("second argument must be integer");
+            System.out.println("Format err : integer required for port number");
         }
 
 //        new UI(client);
@@ -36,9 +36,9 @@ public class Client {
         } catch (UnknownHostException e) {
             System.out.println("server address cannot be reached");
         } catch (IllegalArgumentException e) {
-            System.out.println("port number must be between 0 and 65535");
+            System.out.println("port number over range");
         } catch (ConnectException e) {
-            System.out.println("please try another port number");
+            System.out.println("Connection declined or no server found, consider port number availability");
         } catch (IOException e) {
             System.out.println("The server is down, closing now");
         }
