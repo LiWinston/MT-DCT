@@ -39,8 +39,9 @@ public class Dict {
             ServerLogger.logGeneralErr(STR."Invalid file path ----\{e.getMessage()}");
             e.printStackTrace();
         } catch (IOException e) {
-            ServerLogger.logGeneralErr(STR."File Reading fail ----\{e.getMessage()}");
-            e.printStackTrace();
+            System.out.println(STR."Fail to read file: \{e.getMessage()}");
+            System.out.println(STR."Creating file: \{filePath}");
+
             try {
                 File file = new File(filePath);
                 if (file.createNewFile()) {
@@ -96,10 +97,7 @@ public class Dict {
     public String search(String word) {
 //        System.out.println("Now searching: " + word);
         PriorityQueue<String> q = dictionary.get(word);
-        if (q == null) {
-            return null;
-        }
-        return String.join(";", q);
+        return q == null ? null : String.join(";", q);
     }
 
     public boolean add(String word, String meanings) {
