@@ -6,6 +6,20 @@ import org.json.JSONObject;
 
 public class Request {
 
+    private static final Request instance = new Request();
+
+    private Request() {}
+
+    public static Request getInstance() {
+        return instance;
+    }
+    public enum Action {
+        SEARCH,
+        ADD,
+        DELETE,
+        UPDATE
+    }
+
     public static String createSearchRequest(String word) {
         JSONObject jsonRequest = new JSONObject();
         try {
@@ -54,10 +68,15 @@ public class Request {
         return jsonRequest.toString();
     }
 
-    public static String getAction(String jsonRequest) {
+    public static Action getAction(String jsonRequest) {
         try {
             JSONObject jsonObject = new JSONObject(jsonRequest);
-            return jsonObject.getString("action");
+            try {
+                return Action.valueOf(jsonObject.getString("action").toUpperCase());
+            } catch (IllegalArgumentException e) {
+                System.err.println("Invalid action from request");
+                return null;
+            }
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -74,15 +93,11 @@ public class Request {
         }
     }
 
-    public static String[] getMeanings(String jsonRequest) {
+    public static String getMeanings(String jsonRequest) {
         try {
             JSONObject jsonObject = new JSONObject(jsonRequest);
             JSONArray meaningsArray = jsonObject.getJSONArray("meanings");
-            String[] meanings = new String[meaningsArray.length()];
-            for (int i = 0; i < meaningsArray.length(); i++) {
-                meanings[i] = meaningsArray.getString(i);
-            }
-            return meanings;
+            return meaningsArray.toString();
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
