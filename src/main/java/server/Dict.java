@@ -59,7 +59,7 @@ public class Dict {
 
     public static void main(String[] args) {
         Dict dict = new Dict("dictionary.txt");
-//        System.out.println(dict.search("banana"));
+//        System.out.println(dict.innerSearchsearch("banana"));
 //        System.out.println(dict.add("appleLLL", "a fruit"));
         System.out.println(dict.add("appleLLL", "a"));
         System.out.println(dict.update("apple", "a kind of fruit"));
@@ -96,10 +96,16 @@ public class Dict {
     }
 
 
-    public String search(String word) {
+    private String innerSearch(String word) {
 //        System.out.println("Now searching: " + word);
         PriorityQueue<String> q = dictionary.get(word);
         return q == null ? null : String.join(";", q);
+    }
+
+    public Response search(String word) {
+        String result = innerSearch(word);
+        return result == null ? new Response(false, "Word " + word + " Not Found") :
+                new Response(true, "Word " + word + " Found, meanings: ", result);
     }
 
     public Response add(String word, String meanings) {
@@ -121,8 +127,8 @@ public class Dict {
 
         // Use computeIfAbsent to atomically add the word and its meanings to the dictionary
         return dictionary.computeIfAbsent(word, k -> meaningsQueue) == meaningsQueue ?
-                new Response(true, "Word " + word + " added successfully, meanings: ", search(word)) :
-                new Response(false, "Word " + word + " already exists, meanings: ", search(word));
+                new Response(true, "Word " + word + " added successfully, meanings: ", innerSearch(word)) :
+                new Response(false, "Word " + word + " already exists, meanings: ", innerSearch(word));
     }
 
 
@@ -194,4 +200,6 @@ public class Dict {
     public void close() {
         saveToFile();
     }
+
+
 }

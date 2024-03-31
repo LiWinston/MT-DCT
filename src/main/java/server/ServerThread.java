@@ -39,11 +39,10 @@ public class ServerThread implements Runnable {
                         String word = localReqHdl.getWord(req);
                         switch (action) {
                             case ADD:
-                                String finalWord = word;
                                 executor.submit(() -> {
                                     String meanings = localReqHdl.getMeanings(req);
                                     try {
-                                        Response res = dict.add(finalWord, meanings);
+                                        Response res = dict.add(word, meanings);
 //                                        out.writeChars (res.getMessage());
                                         out.writeUTF(res.toResponse() + "\n");
                                     } catch (IOException e) {
@@ -52,9 +51,8 @@ public class ServerThread implements Runnable {
                                 });
                                 break;
                             case DELETE:
-                                String finalWord1 = word;
                                 executor.submit(() -> {
-                                    Response res = dict.delete(finalWord1);
+                                    Response res = dict.delete(word);
                                     try {
                                         out.writeUTF(res.toResponse() + "\n");
                                     } catch (IOException e) {
@@ -63,10 +61,9 @@ public class ServerThread implements Runnable {
                                 });
                                 break;
                             case UPDATE:
-                                String finalWord2 = word;
                                 executor.submit(() -> {
                                     String meanings = localReqHdl.getMeanings(req);
-                                    Response res = dict.update(finalWord2, meanings);
+                                    Response res = dict.update(word, meanings);
                                     try {
                                         out.writeUTF(res.toResponse() + "\n");
                                     } catch (IOException e) {
@@ -75,11 +72,14 @@ public class ServerThread implements Runnable {
                                 });
                                 break;
                             case SEARCH:
-                                word = localReqHdl.getWord(req);
-                                System.out.println("Searching for word" + word);
-
-                                String result = dict.search(word);
-                                out.writeUTF(result + "\n");
+                                executor.submit(() -> {
+                                    Response res = dict.search(word);
+                                    try {
+                                        out.writeUTF(res.toResponse() + "\n");
+                                    } catch (IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                });
                                 break;
                             default:
                                 out.writeUTF("Invalid request\n");

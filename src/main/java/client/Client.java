@@ -118,11 +118,30 @@ public class Client implements Runnable {
         Str.add("ININININI;");
         while (true) {
             try {
-                String req = localReqHdl.createUpdateRequest("apple", Str.toArray(new String[0]));
+
+                String req1 = localReqHdl.createSearchRequest("apple");
+                CompletableFuture<String> res1 = sendRequest(req1);
+                System.out.println(STR."Request sent: \{req1}");
+                System.out.println(res1.get());
+
+
+                String req2 = localReqHdl.createUpdateRequest("apple", Str.toArray(new String[0]));
                 Str.add(new Random().nextInt(100) + ";");
-                CompletableFuture<String> res = sendRequest(req);
-                System.out.println(STR."Request sent: \{req}");
+                CompletableFuture<String> res = sendRequest(req2);
+                System.out.println(STR."Request sent: \{req2}");
                 System.out.println(res.get());
+
+                String req3 = localReqHdl.createDeleteRequest("apple");
+                CompletableFuture<String> res3 = sendRequest(req3);
+                System.out.println(STR."Request sent: \{req3}");
+                System.out.println(res3.get());
+
+                String req4 = localReqHdl.createAddRequest("apple", Str.toArray(new String[0]));
+                CompletableFuture<String> res4 = sendRequest(req4);
+                System.out.println(STR."Request sent: \{req4}");
+                System.out.println(res4.get());
+
+
 //                String req2 = localReqHdl.createDeleteRequest("apple");
 //                System.out.println(STR."Request sent: \{req2}");
 //                CompletableFuture<String> res2 = sendRequest(req2);
