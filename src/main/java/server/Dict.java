@@ -1,5 +1,7 @@
 package server;
 
+import prtc.Response;
+
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -100,10 +102,10 @@ public class Dict {
         return q == null ? null : String.join(";", q);
     }
 
-    public boolean add(String word, String meanings) {
+    public Response add(String word, String meanings) {
         if (meanings.isEmpty()) {
             // TODO: Log to client
-            return false;
+            return new Response(false, "Meanings cannot be empty");
         }
 
         // Use computeIfAbsent to atomically add the word and its meanings to the dictionary
