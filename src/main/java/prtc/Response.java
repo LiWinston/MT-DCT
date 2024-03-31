@@ -1,6 +1,25 @@
 package prtc;
 
 public class Response {
+    public Response(boolean b, String msg) {
+        status = b ? Status.SUCCESS : Status.FAIL;
+        message = msg;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public enum Status {
+        SUCCESS,
+        FAIL
+    }
+    Status status;
+    String message;
     //A response handler, not response class
     public static String failResponse(String message) {
         return "{\"status\":\"fail\",\"message\":\"" + message + "\"}";

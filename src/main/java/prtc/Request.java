@@ -6,13 +6,12 @@ import org.json.JSONObject;
 
 public class Request {
 
-    private static final Request instance = new Request();
+//    private static final Request instance = new Request();
 
-    private Request() {}
 
-    public static Request getInstance() {
-        return instance;
-    }
+//    public static Request getInstance() {
+//        return instance;
+//    }
     public enum Action {
         SEARCH,
         ADD,
@@ -20,7 +19,7 @@ public class Request {
         UPDATE
     }
 
-    public static String createSearchRequest(String word) {
+    public String createSearchRequest(String word) {
         JSONObject jsonRequest = new JSONObject();
         try {
             jsonRequest.put("action", "search");
@@ -31,7 +30,7 @@ public class Request {
         return jsonRequest.toString();
     }
 
-    public static String createAddRequest(String word, String[] meanings) {
+    public String createAddRequest(String word, String[] meanings) {
         JSONObject jsonRequest = new JSONObject();
         try {
             jsonRequest.put("action", "add");
@@ -44,7 +43,7 @@ public class Request {
         return jsonRequest.toString();
     }
 
-    public static String createDeleteRequest(String word) {
+    public String createDeleteRequest(String word) {
         JSONObject jsonRequest = new JSONObject();
         try {
             jsonRequest.put("action", "delete");
@@ -55,7 +54,7 @@ public class Request {
         return jsonRequest.toString();
     }
 
-    public static String createUpdateRequest(String word, String[] meanings) {
+    public String createUpdateRequest(String word, String[] meanings) {
         JSONObject jsonRequest = new JSONObject();
         try {
             jsonRequest.put("action", "update");
@@ -68,7 +67,7 @@ public class Request {
         return jsonRequest.toString();
     }
 
-    public static Action getAction(String jsonRequest) {
+    public Action getAction(String jsonRequest) {
         try {
             JSONObject jsonObject = new JSONObject(jsonRequest);
             try {
@@ -83,7 +82,7 @@ public class Request {
         }
     }
 
-    public static String getWord(String jsonRequest) {
+    public String getWord(String jsonRequest) {
         try {
             JSONObject jsonObject = new JSONObject(jsonRequest);
             return jsonObject.getString("word");
@@ -93,10 +92,14 @@ public class Request {
         }
     }
 
-    public static String getMeanings(String jsonRequest) {
+    public String getMeanings(String jsonRequest) {
         try {
             JSONObject jsonObject = new JSONObject(jsonRequest);
             JSONArray meaningsArray = jsonObject.getJSONArray("meanings");
+            //add ; to separate meanings
+            for (int i = 0; i < meaningsArray.length(); i++) {
+                meaningsArray.put(i, meaningsArray.getString(i) + ";");
+            }
             return meaningsArray.toString();
         } catch (JSONException e) {
             e.printStackTrace();

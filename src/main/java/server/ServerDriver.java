@@ -19,6 +19,8 @@ public class ServerDriver {
                 ServerLogger.logGeneralErr("Expected arguments: “port” “Dict file PATH”");
                 System.exit(1);
             }
+        }else {
+            dictFile = args[1];
         }
         try {
             port = Integer.parseInt(args[0]);
@@ -27,17 +29,18 @@ public class ServerDriver {
             System.exit(1);
         }
 
-        dictFile = args[1];
-
         Dict dict = new Dict(dictFile);
         System.out.println(STR."Server started listening on port: \{port}");
         try (ServerSocket serverSocket = new ServerSocket(port)) {
 //            serverSocket.setSoTimeout(90000);
-            dict.add("server", serverSocket.toString());
+//            dict.add("server", serverSocket.toString());
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                //待架构设计，倾向于虚拟线程 + Thread per request
-                dict.saveToFile();
+
+                ServerThread serverThread = new ServerThread(clientSocket, dict);
+                System.out.println(STR."Client connected: \{clientSocket.getRemoteSocketAddress()}");
+                Thread.Builder.OfVirtual thread = Thread.ofVirtual();
+                thread.start(serverThread);
             }
         }catch (IOException ioe) {
             ServerLogger.logGeneralErr(STR."Could not listen on port: \{port}");
