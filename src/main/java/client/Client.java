@@ -1,17 +1,23 @@
 package client;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import prtc.Request;
+
+import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
-public class Client {
+public class Client implements Runnable {
+    BufferedReader b_iStream;
     private String address;
     private int port;
     private DataInputStream in;
     private DataOutputStream out;
+    private Socket socket;
+    Request localReqHdl = new Request();
 
     public static void main(String[] args) {
         if (args.length != 2) {
@@ -20,6 +26,7 @@ public class Client {
         }
 
         Client client = new Client();
+        Thread clientThread = new Thread(client);
 
         client.address = args[0];
         client.port = 8500;
@@ -42,24 +49,80 @@ public class Client {
         } catch (IOException e) {
             System.out.println("The server is down, closing now");
         }
+        if (client.socket != null) {
+            System.out.println("Client socket not null");
+            if (client.socket.isConnected()) {
+//            new UI(client);
+
+                clientThread.start();
+            }
+        }
+
+
     }
 
     protected void connect() throws IllegalArgumentException, IOException {
-        Socket socket = new Socket(address, port);
-        if (socket != null) {
+        socket = new Socket(address, port);
+        if (socket.isConnected()) {
             System.out.println("Connected to server");
         }
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
+        b_iStream = new BufferedReader(new InputStreamReader(in));
+
     }
 
-    protected String sendRequestForResponse(String s) {
+    protected void disconnect() {
         try {
-            out.writeUTF(s);
-            return in.readUTF();
+//            in.close();
+//            out.close();
+            socket.close();
+            in = null;
+            out = null;
+            socket = null;
         } catch (IOException e) {
-            return "Error//Unable to connect to the server, please restart the client";
+            System.out.println("Err: Unable to close the connection");
         }
     }
 
+
+    protected CompletableFuture<String> sendRequest(String s) {
+        CompletableFuture<String> future = new CompletableFuture<>();
+        try {
+            out.writeBytes(STR."\{s}\n");
+//            out.flush();
+            // 异步接收服务器的响应
+            CompletableFuture.runAsync(() -> {
+                try {
+//                    String response = b_iStream.readLine();
+                    String response = b_iStream.readLine();
+                    future.complete(response);
+                } catch (IOException e) {
+                    future.completeExceptionally(e);
+                }
+            });
+        } catch (IOException e) {
+            future.completeExceptionally(e);
+//            Thread.currentThread().interrupt();
+        }
+        return future;
+    }
+
+    @Override
+    public void run() {
+        System.out.println("Client running");
+        while (true) {
+            try {
+                String req = localReqHdl.createSearchRequest("apple");
+                CompletableFuture<String> res = sendRequest(req);
+                System.out.println(STR."Request sent: \{req}");
+                System.out.println(res.get());
+            } catch (ExecutionException | InterruptedException e) {
+                System.out.println("Err: connection lost, closing now");
+                Thread.currentThread().interrupt();
+                disconnect();
+//                throw new RuntimeException(e);
+            }
+        }
+    }
 }
