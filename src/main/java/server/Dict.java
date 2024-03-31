@@ -59,10 +59,10 @@ public class Dict {
 
     public static void main(String[] args) {
         Dict dict = new Dict("dictionary.txt");
-        System.out.println(dict.search("banana"));
-        System.out.println(dict.add("appleLLL", "a fruit"));
+//        System.out.println(dict.search("banana"));
+//        System.out.println(dict.add("appleLLL", "a fruit"));
         System.out.println(dict.add("appleLLL", "a"));
-        System.out.println(dict.update("appleLLL", "a kind of fruit"));
+        System.out.println(dict.update("apple", "a kind of fruit"));
         dict.printDictionaryInfo();
         dict.close();
     }
@@ -134,13 +134,13 @@ public class Dict {
                 new Response(true, "Word " + word + " deleted successfully, Previous meanings: ", String.join(";", result));
     }
 
-    public boolean update(String word, String meanings) {
+    public Response update(String word, String meanings) {
         if (meanings.isEmpty()) {
-            return false; // if the new meanings are empty, return false
+            return new Response(false, "Meanings cannot be empty, update failed");
         }
         AtomicBoolean isNoNewMeaning = new AtomicBoolean(false);
         // update the meanings of the word in an atomic way by a lambda function
-        PriorityQueue<String> updatedMeanings = dictionary.computeIfPresent(word, (key, oldValue) -> {
+        PriorityQueue<String> updatedMeanings = dictionary.computeIfPresent(word, (_, oldValue) -> {
 
             //create a new priority queue to store the updated meanings
             PriorityQueue<String> newMeanings = new PriorityQueue<>(MEANINGQUEUECOMPARATOR);
@@ -153,14 +153,20 @@ public class Dict {
             }
             if(newMeanings.isEmpty()){
                 isNoNewMeaning.set(true);
-                //TODO: Log to client: "No new meaning to update"
             }
             // add the old meanings to the new meanings
             newMeanings.addAll(oldValue);
             return newMeanings;
         });
 
-        return (updatedMeanings != null) && !isNoNewMeaning.get();
+//        return (updatedMeanings != null) && !isNoNewMeaning.get();
+        if (updatedMeanings != null && !isNoNewMeaning.get()) {
+            return new Response(true, "Word " + word + " updated successfully, New meanings: ", String.join(";", updatedMeanings));
+        } else if (isNoNewMeaning.get()) {
+            return new Response(true, "No new meaning to update, everything remains.");
+        } else {
+            return new Response(false, "Word " + word + " Not Found, update failed");
+        }
     }
 
 

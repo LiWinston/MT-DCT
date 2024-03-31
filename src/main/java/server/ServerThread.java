@@ -63,10 +63,16 @@ public class ServerThread implements Runnable {
                                 });
                                 break;
                             case UPDATE:
-                                word = localReqHdl.getWord(req);
-                                String meanings = localReqHdl.getMeanings(req);
-                                dict.update(word, meanings);
-                                out.writeUTF("Word updated successfully\n");
+                                String finalWord2 = word;
+                                executor.submit(() -> {
+                                    String meanings = localReqHdl.getMeanings(req);
+                                    Response res = dict.update(finalWord2, meanings);
+                                    try {
+                                        out.writeUTF(res.toResponse() + "\n");
+                                    } catch (IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                });
                                 break;
                             case SEARCH:
                                 word = localReqHdl.getWord(req);
@@ -79,6 +85,7 @@ public class ServerThread implements Runnable {
                                 out.writeUTF("Invalid request\n");
                         }
                     }
+                    dict.saveToFile();
                 }
             }
         } catch (IOException e) {

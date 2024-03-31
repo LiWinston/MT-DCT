@@ -7,14 +7,16 @@ import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.Future;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class Client implements Runnable {
     BufferedReader b_iStream;
-    private String address;
-    private int port;
+    String address;
+    int port;
     private DataInputStream in;
     private DataOutputStream out;
     private Socket socket;
@@ -112,17 +114,20 @@ public class Client implements Runnable {
     @Override
     public void run() {
         System.out.println("Client running");
+        ArrayList<String> Str = new ArrayList<>();
+        Str.add("ININININI;");
         while (true) {
             try {
-                String req = localReqHdl.createAddRequest("apple", new String[]{"a fruit; a kind of fruit"});
+                String req = localReqHdl.createUpdateRequest("apple", Str.toArray(new String[0]));
+                Str.add(new Random().nextInt(100) + ";");
                 CompletableFuture<String> res = sendRequest(req);
                 System.out.println(STR."Request sent: \{req}");
                 System.out.println(res.get());
-                String req2 = localReqHdl.createDeleteRequest("apple");
-                System.out.println(STR."Request sent: \{req2}");
-                CompletableFuture<String> res2 = sendRequest(req2);
-                System.out.println(res2.get());
-
+//                String req2 = localReqHdl.createDeleteRequest("apple");
+//                System.out.println(STR."Request sent: \{req2}");
+//                CompletableFuture<String> res2 = sendRequest(req2);
+//                System.out.println(res2.get());
+//                Thread.sleep(1000);
             } catch (ExecutionException | InterruptedException e) {
                 System.out.println("Err: connection lost, closing now");
                 Thread.currentThread().interrupt();

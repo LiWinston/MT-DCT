@@ -78,9 +78,12 @@ public class Response{
             JSONObject jsonObject = new JSONObject(res);
             return jsonObject.getString("meanings");
         } catch (JSONException e) {
-            System.err.println(res);
-            return "???";
+            return "";
         }
+    }
+
+    public String toString() {
+        return STR."Response{status=\{status}, message='\{message}\{'\''}, meanings='\{meanings}\{'\''}\{'}'}";
     }
 
 
