@@ -45,7 +45,7 @@ public class ServerThread implements Runnable {
                                     try {
                                         Response res = dict.add(finalWord, meanings);
 //                                        out.writeChars (res.getMessage());
-                                        out.writeBytes(res.toResponse() + "\n");
+                                        out.writeUTF(res.toResponse() + "\n");
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
                                     }
@@ -56,7 +56,7 @@ public class ServerThread implements Runnable {
                                 executor.submit(() -> {
                                     Response res = dict.delete(finalWord1);
                                     try {
-                                        out.writeBytes(res.toResponse() + "\n");
+                                        out.writeUTF(res.toResponse() + "\n");
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
                                     }
@@ -66,17 +66,17 @@ public class ServerThread implements Runnable {
                                 word = localReqHdl.getWord(req);
                                 String meanings = localReqHdl.getMeanings(req);
                                 dict.update(word, meanings);
-                                out.writeBytes("Word updated successfully\n");
+                                out.writeUTF("Word updated successfully\n");
                                 break;
                             case SEARCH:
                                 word = localReqHdl.getWord(req);
                                 System.out.println("Searching for word" + word);
 
                                 String result = dict.search(word);
-                                out.writeBytes(result + "\n");
+                                out.writeUTF(result + "\n");
                                 break;
                             default:
-                                out.writeBytes("Invalid request\n");
+                                out.writeUTF("Invalid request\n");
                         }
                     }
                 }

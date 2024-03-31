@@ -121,7 +121,7 @@ public class Dict {
 
         // Use computeIfAbsent to atomically add the word and its meanings to the dictionary
         return dictionary.computeIfAbsent(word, k -> meaningsQueue) == meaningsQueue ?
-                new Response(true, "Word " + word + " added successfully") :
+                new Response(true, "Word " + word + " added successfully, meanings: ", search(word)) :
                 new Response(false, "Word " + word + " already exists, meanings: ", search(word));
     }
 

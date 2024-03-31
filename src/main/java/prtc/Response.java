@@ -1,6 +1,5 @@
 package prtc;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,7 +24,7 @@ public class Response{
     final Status status;
     final String message;
 
-    volatile String meanings = null;
+    volatile String meanings;
 
     public Status getStatus() {
         return status;
@@ -46,8 +45,7 @@ public class Response{
             jsonResponse.put("message", message);
 
             if (meanings != null) {
-                JSONArray meaningsArray = new JSONArray(meanings);
-                jsonResponse.put("meanings", meaningsArray);
+                jsonResponse.put("meanings", meanings);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -80,7 +78,8 @@ public class Response{
             JSONObject jsonObject = new JSONObject(res);
             return jsonObject.getString("meanings");
         } catch (JSONException e) {
-            return null;
+            System.err.println(res);
+            return "???";
         }
     }
 

@@ -97,10 +97,12 @@ public class Request {
             JSONObject jsonObject = new JSONObject(jsonRequest);
             JSONArray meaningsArray = jsonObject.getJSONArray("meanings");
             //add ; to separate meanings
+            StringBuilder meanings = new StringBuilder();
             for (int i = 0; i < meaningsArray.length(); i++) {
-                meaningsArray.put(i, meaningsArray.getString(i) + ";");
+//                meaningsArray.put(i, meaningsArray.getString(i) + ";");
+                meanings.append(meaningsArray.getString(i)).append(";");
             }
-            return meaningsArray.toString();
+            return meanings.toString();
         } catch (JSONException e) {
             e.printStackTrace();
             return null;

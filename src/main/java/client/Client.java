@@ -96,7 +96,7 @@ public class Client implements Runnable {
             CompletableFuture.runAsync(() -> {
                 try {
 //                    String response = b_iStream.readLine();
-                    String response = b_iStream.readLine();
+                    String response = in.readUTF();
                     future.complete(Response.getStatusString(response) + ": " + Response.getMessageString(response) + " " + Response.getMeaningsString(response));
                 } catch (IOException e) {
                     future.completeExceptionally(e);

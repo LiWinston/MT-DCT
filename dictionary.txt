@@ -3,4 +3,5 @@ date: a brown fruit; a small fruit; a sweet fruit
 cherry: a red fruit; a small fruit; a sour fruit
 apple:a fruit;a kind of fruit
 pear: a green fruit; a sweet fruit; a yellow fruit
+appleLLL:a fruit;a kind of fruit
 grape: a small fruit; a purple fruit; a sweet fruit
