@@ -9,16 +9,6 @@ public class Request {
 //    private static final Request instance = new Request();
 
 
-//    public static Request getInstance() {
-//        return instance;
-//    }
-    public enum Action {
-        SEARCH,
-        ADD,
-        DELETE,
-        UPDATE
-    }
-
     public String createSearchRequest(String word) {
         JSONObject jsonRequest = new JSONObject();
         try {
@@ -107,5 +97,15 @@ public class Request {
             e.printStackTrace();
             return null;
         }
+    }
+
+    //    public static Request getInstance() {
+//        return instance;
+//    }
+    public enum Action {
+        SEARCH,
+        ADD,
+        DELETE,
+        UPDATE
     }
 }

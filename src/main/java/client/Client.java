@@ -9,7 +9,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.Future;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -17,10 +16,10 @@ public class Client implements Runnable {
     BufferedReader b_iStream;
     String address;
     int port;
+    Request localReqHdl = new Request();
     private DataInputStream in;
     private DataOutputStream out;
     private Socket socket;
-    Request localReqHdl = new Request();
 
     public static void main(String[] args) {
         if (args.length != 2) {

@@ -3,9 +3,11 @@ package prtc;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
+public class Response {
+    final Status status;
+    final String message;
+    volatile String meanings;
 
-public class Response{
     public Response(boolean b, String msg) {
         status = b ? Status.SUCCESS : Status.FAIL;
         message = msg;
@@ -14,43 +16,6 @@ public class Response{
         status = b ? Status.SUCCESS : Status.FAIL;
         message = msg;
         this.meanings = meanings;
-    }
-
-
-    public enum Status {
-        SUCCESS,
-        FAIL
-    }
-    final Status status;
-    final String message;
-
-    volatile String meanings;
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public String getMeanings() {
-        return meanings;
-    }
-
-    public String toResponse() {
-        JSONObject jsonResponse = new JSONObject();
-        try {
-            jsonResponse.put("status", status.toString());
-            jsonResponse.put("message", message);
-
-            if (meanings != null) {
-                jsonResponse.put("meanings", meanings);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonResponse.toString();
     }
 
     public static String getStatusString(String res) {
@@ -82,8 +47,40 @@ public class Response{
         }
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getMeanings() {
+        return meanings;
+    }
+
+    public String toResponse() {
+        JSONObject jsonResponse = new JSONObject();
+        try {
+            jsonResponse.put("status", status.toString());
+            jsonResponse.put("message", message);
+
+            if (meanings != null) {
+                jsonResponse.put("meanings", meanings);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonResponse.toString();
+    }
+
     public String toString() {
         return STR."Response{status=\{status}, message='\{message}\{'\''}, meanings='\{meanings}\{'\''}\{'}'}";
+    }
+
+    public enum Status {
+        SUCCESS,
+        FAIL
     }
 
 

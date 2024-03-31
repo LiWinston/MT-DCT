@@ -3,7 +3,10 @@ package server;
 import prtc.Response;
 
 import java.io.*;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -13,7 +16,7 @@ public class Dict {
     Comparator<String> MEANINGQUEUECOMPARATOR = Comparator.comparingInt(String::length);
 
     public Dict(String filePath) {
-        if(dictionary != null) {
+        if (dictionary != null) {
             throw new IllegalStateException("Already initialized an instance of Dict");
         }
 
@@ -157,7 +160,7 @@ public class Dict {
                     newMeanings.add(newMeaning);
                 }
             }
-            if(newMeanings.isEmpty()){
+            if (newMeanings.isEmpty()) {
                 isNoNewMeaning.set(true);
             }
             // add the old meanings to the new meanings

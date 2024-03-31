@@ -1,7 +1,9 @@
 package server;
 
-import java.net.*;
-import java.io.*;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 public class ServerDriver {
     public static final int DefaultPORT = 8500;
 
@@ -15,11 +17,11 @@ public class ServerDriver {
             if (args.length == 1) {
                 dictFile = DEFAULT_FILE;
                 ServerLogger.logGeneralErr(STR."Dictionary file not specified, using default file: ./\{DEFAULT_FILE}");
-            }else {
+            } else {
                 ServerLogger.logGeneralErr("Expected arguments: “port” “Dict file PATH”");
                 System.exit(1);
             }
-        }else {
+        } else {
             dictFile = args[1];
         }
         try {
@@ -42,10 +44,10 @@ public class ServerDriver {
                 Thread.Builder.OfVirtual thread = Thread.ofVirtual();
                 thread.start(serverThread);
             }
-        }catch (IOException ioe) {
+        } catch (IOException ioe) {
             ServerLogger.logGeneralErr(STR."Could not listen on port: \{port}");
             System.exit(1);
-        }catch (IllegalArgumentException iae) {
+        } catch (IllegalArgumentException iae) {
             ServerLogger.logGeneralErr(STR."Port number out of range: \{port}");
             System.exit(1);
         }

@@ -12,6 +12,7 @@ public class ServerLogger {
     static void logGeneralErr(String msg) {
         System.err.println(STR."Err: \{msg}");
     }
+
     static void logInvalidArgumentErr(String arg) {
         System.err.println(STR."Argument : \{arg} invalid! ");
         System.exit(1);
