@@ -1,6 +1,7 @@
 package client;
 
 import prtc.Request;
+import prtc.Response;
 
 import java.io.*;
 import java.net.ConnectException;
@@ -96,7 +97,7 @@ public class Client implements Runnable {
                 try {
 //                    String response = b_iStream.readLine();
                     String response = b_iStream.readLine();
-                    future.complete(response);
+                    future.complete(Response.getStatusString(response) + ": " + Response.getMessageString(response) + " " + Response.getMeaningsString(response));
                 } catch (IOException e) {
                     future.completeExceptionally(e);
                 }
@@ -113,10 +114,15 @@ public class Client implements Runnable {
         System.out.println("Client running");
         while (true) {
             try {
-                String req = localReqHdl.createSearchRequest("apple");
+                String req = localReqHdl.createAddRequest("apple", new String[]{"a fruit; a kind of fruit"});
                 CompletableFuture<String> res = sendRequest(req);
                 System.out.println(STR."Request sent: \{req}");
                 System.out.println(res.get());
+                String req2 = localReqHdl.createDeleteRequest("apple");
+                System.out.println(STR."Request sent: \{req2}");
+                CompletableFuture<String> res2 = sendRequest(req2);
+                System.out.println(res2.get());
+
             } catch (ExecutionException | InterruptedException e) {
                 System.out.println("Err: connection lost, closing now");
                 Thread.currentThread().interrupt();

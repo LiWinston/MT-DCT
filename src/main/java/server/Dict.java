@@ -122,14 +122,16 @@ public class Dict {
         // Use computeIfAbsent to atomically add the word and its meanings to the dictionary
         return dictionary.computeIfAbsent(word, k -> meaningsQueue) == meaningsQueue ?
                 new Response(true, "Word " + word + " added successfully") :
-                new Response(false, "Word " + word + " already exists");
+                new Response(false, "Word " + word + " already exists, meanings: ", search(word));
     }
 
 
-    public boolean delete(String word) {
+    public Response delete(String word) {
 //        System.out.println("Now deleting: " + word);
         // If the word doesn't exist, return false; otherwise delete it from the dictionary, return true
-        return dictionary.remove(word) != null;
+        PriorityQueue<String> result = dictionary.remove(word);
+        return result == null ? new Response(false, "Word " + word + " Not Found, nothing to delete") :
+                new Response(true, "Word " + word + " deleted successfully, Previous meanings: ", String.join(";", result));
     }
 
     public boolean update(String word, String meanings) {

@@ -43,18 +43,24 @@ public class ServerThread implements Runnable {
                                 executor.submit(() -> {
                                     String meanings = localReqHdl.getMeanings(req);
                                     try {
-                                        out.writeChars (Response.Status.SUCCESS == dict.add(finalWord, meanings).getStatus()?
-                                                Response.simpleSuccessResponse(STR."Word\{finalWord} added successfully") :
-                                                Response.failResponse(STR."Word\{finalWord} already exists"));
+                                        Response res = dict.add(finalWord, meanings);
+//                                        out.writeChars (res.getMessage());
+                                        out.writeBytes(res.toResponse() + "\n");
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
                                     }
                                 });
                                 break;
                             case DELETE:
-                                word = localReqHdl.getWord(req);
-                                dict.delete(word);
-                                out.writeBytes("Word deleted successfully\n");
+                                String finalWord1 = word;
+                                executor.submit(() -> {
+                                    Response res = dict.delete(finalWord1);
+                                    try {
+                                        out.writeBytes(res.toResponse() + "\n");
+                                    } catch (IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                });
                                 break;
                             case UPDATE:
                                 word = localReqHdl.getWord(req);
