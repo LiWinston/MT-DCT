@@ -3,11 +3,7 @@ package server;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Shizhan Xu, 771900
- * University of Melbourne
- * All rights reserved
- */
+
 public class ServerLogger {
     static void logGeneralErr(String msg) {
         System.err.println(STR."Err: \{msg}");
