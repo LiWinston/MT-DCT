@@ -18,8 +18,8 @@ public class Response {
         SUCCESS,
         FAIL
     }
-    Status status;
-    String message;
+    final Status status;
+    final String message;
     //A response handler, not response class
     public static String failResponse(String message) {
         return "{\"status\":\"fail\",\"message\":\"" + message + "\"}";

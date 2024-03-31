@@ -107,12 +107,11 @@ public class Dict {
             // TODO: Log to client
             return new Response(false, "Meanings cannot be empty");
         }
-
         // Use computeIfAbsent to atomically add the word and its meanings to the dictionary
         PriorityQueue<String> meaningsQueue = new PriorityQueue<>(MEANINGQUEUECOMPARATOR);
         String[] meaningsArray = meanings.split(";");
         if (meaningsArray.length == 0) {
-            return false;
+            return new Response(false, "Meanings cannot be empty");
         }
         for (String meaning : meaningsArray) {
             if (!meaning.isEmpty()) {
@@ -121,7 +120,9 @@ public class Dict {
         }
 
         // Use computeIfAbsent to atomically add the word and its meanings to the dictionary
-        return dictionary.putIfAbsent(word, meaningsQueue) == null;
+        return dictionary.computeIfAbsent(word, k -> meaningsQueue) == meaningsQueue ?
+                new Response(true, "Word " + word + " added successfully") :
+                new Response(false, "Word " + word + " already exists");
     }
 
 
