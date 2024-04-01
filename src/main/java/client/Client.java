@@ -38,7 +38,6 @@ public class Client implements Runnable {
         } catch (NumberFormatException e) {
             System.out.println("Format err : integer required for port number");
         }
-
 //        new UI(client);
         try {
             client.connect();
@@ -55,7 +54,6 @@ public class Client implements Runnable {
             System.out.println("Client socket not null");
             if (client.socket.isConnected()) {
 //            new UI(client);
-
                 clientThread.start();
             }
         }
@@ -63,10 +61,10 @@ public class Client implements Runnable {
 
     }
 
-    protected void connect() throws IllegalArgumentException, IOException {
+    protected void connect() throws IllegalArgumentException, IOException{
         socket = new Socket(address, port);
         if (socket.isConnected()) {
-            System.out.println("Connected to server");
+            System.out.println("Connected to server: " + address + ":" + port);
         }
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());

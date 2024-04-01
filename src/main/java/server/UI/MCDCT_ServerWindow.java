@@ -1,46 +1,35 @@
 /*
- * Created by JFormDesigner on Mon Apr 01 16:50:15 AEDT 2024
+ * Created by JFormDesigner on Mon Apr 01 22:01:38 AEDT 2024
  */
 
 package server.UI;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JToolBar;
+import server.ServerDriver;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 /**
  * @author Winston
  */
-public class ServerMonitor extends JFrame {
-    public static void main(String[] args) {
-        ServerMonitor serverMonitor = new ServerMonitor();
-        serverMonitor.setVisible(true);
-    }
-    public ServerMonitor() {
+public class MCDCT_ServerWindow extends JFrame {
+    public MCDCT_ServerWindow(ServerDriver serverDriver) {
+        this.serverDriver = serverDriver;
         initComponents();
+    }
+    ServerDriver serverDriver;
+
+
+    private void checkBoxMenuItem1(ActionEvent e) {
+        serverDriver.setAllowNewConnection(checkBoxMenuItem1.isSelected());
     }
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents  @formatter:off
         menuBar1 = new JMenuBar();
         menu1 = new JMenu();
-        AcceptNewConnectionButton = new JCheckBoxMenuItem();
+        checkBoxMenuItem1 = new JCheckBoxMenuItem();
 
         //======== this ========
         setName("this");
@@ -53,14 +42,14 @@ public class ServerMonitor extends JFrame {
 
             //======== menu1 ========
             {
-                menu1.setText("ServerSettings");
+                menu1.setText("text");
                 menu1.setName("menu1");
 
-                //---- AcceptNewConnectionButton ----
-                AcceptNewConnectionButton.setText("AcceptNewConnection");
-                AcceptNewConnectionButton.setSelected(true);
-                AcceptNewConnectionButton.setName("AcceptNewConnectionButton");
-                menu1.add(AcceptNewConnectionButton);
+                //---- checkBoxMenuItem1 ----
+                checkBoxMenuItem1.setText("AllowNewConnect");
+                checkBoxMenuItem1.setName("checkBoxMenuItem1");
+                checkBoxMenuItem1.addActionListener(this::checkBoxMenuItem1);
+                menu1.add(checkBoxMenuItem1);
             }
             menuBar1.add(menu1);
         }
@@ -88,6 +77,6 @@ public class ServerMonitor extends JFrame {
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables  @formatter:off
     private JMenuBar menuBar1;
     private JMenu menu1;
-    private JCheckBoxMenuItem AcceptNewConnectionButton;
+    private JCheckBoxMenuItem checkBoxMenuItem1;
     // JFormDesigner - End of variables declaration  //GEN-END:variables  @formatter:on
 }

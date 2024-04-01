@@ -1,13 +1,19 @@
 package server;
 
+import server.UI.MCDCT_ServerWindow;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ServerDriver {
+import static java.lang.Thread.sleep;
+
+public class ServerDriver{
     public static final int DefaultPORT = 8500;
 
+    boolean allowNewConnection = true;
     public static void main(String[] args) {
+        ServerDriver serverDriver = new ServerDriver();
         int port = DefaultPORT;
         String dictFile = null;
         String DEFAULT_FILE = "dictionary.txt";
@@ -32,17 +38,22 @@ public class ServerDriver {
         }
 
         Dict dict = new Dict(dictFile);
-        System.out.println(STR."Server started listening on port: \{port}");
+
+
         try (ServerSocket serverSocket = new ServerSocket(port)) {
+            System.out.println(STR."Server started listening on port: \{port}");
+            MCDCT_ServerWindow window = new MCDCT_ServerWindow(serverDriver);
+            window.setVisible(true);
 //            serverSocket.setSoTimeout(90000);
 //            dict.add("server", serverSocket.toString());
             while (true) {
-                Socket clientSocket = serverSocket.accept();
+                    Socket clientSocket = serverSocket.accept();
 
-                ServerThread serverThread = new ServerThread(clientSocket, dict);
-                System.out.println(STR."Client connected: \{clientSocket.getRemoteSocketAddress()}");
-                Thread.Builder.OfVirtual thread = Thread.ofVirtual();
-                thread.start(serverThread);
+                    ServerThread serverThread = new ServerThread(clientSocket, dict);
+                    System.out.println(STR."Client connected: \{clientSocket.getRemoteSocketAddress()}");
+                    Thread.Builder.OfVirtual thread = Thread.ofVirtual();
+                    thread.start(serverThread);
+                    connectedClients++;
             }
         } catch (IOException ioe) {
             ServerLogger.logGeneralErr(STR."Could not listen on port: \{port}");
@@ -52,5 +63,10 @@ public class ServerDriver {
             System.exit(1);
         }
 //        dict.close();
+    }
+
+    public void setAllowNewConnection(boolean selected) {
+        allowNewConnection = selected;
+        System.out.println(STR."allowNewConnection set to: \{selected}");
     }
 }
