@@ -4,6 +4,7 @@
 
 package client;
 
+import prtc.Request;
 import prtc.Response;
 
 import javax.swing.*;
@@ -11,6 +12,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.CaretEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class OperateUI extends JPanel {
     private static final int MAX_WORD_LENGTH = 25;
@@ -128,21 +132,24 @@ public class OperateUI extends JPanel {
 
     private void searchButtonActionPerformed(ActionEvent e) {
         if (searchBarFormatCheck()) {
-            String[] reply = client.sendRequest(
-                    "search//" + searchBar.getText()).split("//");
-            if (parseResponse(reply))
-                meaningsText.setText(reply[1]);
-            else
-                meaningsText.setText("");
+            String req = client.localReqHdl.createSearchRequest(searchBar.getText());
+            CompletableFuture<String> res = client.sendRequest(req);
+            try {
+                System.out.println(STR."received response: \{res.get()}");
+                parseResponse(Objects.requireNonNull(res.join()), req);
+                meaningsText.setText(Response.getMeaningsString(res.join()));
+            } catch (InterruptedException | ExecutionException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 
 
     private void deleteButtonActionPerformed(ActionEvent e) {
         if (searchBarFormatCheck()) {
-            String[] reply = client.sendRequest(
-                    "delete//" + searchBar.getText()).split("//");
-            parseResponse(reply);
+            String req = client.localReqHdl.createDeleteRequest(searchBar.getText());
+            CompletableFuture<String> res = client.sendRequest(req);
+            parseResponse(Objects.requireNonNull(res.join()), req);
             meaningsText.setText("");
         }
     }
@@ -150,38 +157,42 @@ public class OperateUI extends JPanel {
 
     private void addButtonActionPerformed(ActionEvent e) {
         if (searchBarFormatCheck() && meaningsFormatCheck()) {
-            String[] reply = client.sendRequest(
-                    "add//" + searchBar.getText() + "//" + meaningsText.getText()
-            ).split("//");
-            parseResponse(reply);
+            String req = client.localReqHdl.createAddRequest(
+                    searchBar.getText(), meaningsText.getText().split("\n")
+            );
+            CompletableFuture<String> res = client.sendRequest(req);
+            parseResponse(Objects.requireNonNull(res.join()), req);
+            meaningsText.setText("");
         }
     }
 
     private void updateButtonActionPerformed(ActionEvent e) {
         if (searchBarFormatCheck() && meaningsFormatCheck()) {
-            String[] reply = client.sendRequest(
-                    "update//" + searchBar.getText() + "//" + meaningsText.getText()
-            ).split("//");
-            parseResponse(reply);
+            String req = client.localReqHdl.createUpdateRequest(
+                    searchBar.getText(), meaningsText.getText().split("\n")
+            );
+            CompletableFuture<String> res = client.sendRequest(req);
+            parseResponse(Objects.requireNonNull(res.join()), req);
+            meaningsText.setText(Response.getMeaningsString(res.join()));
         }
     }
 
-    private boolean parseResponse(String reply) {
-        switch (reply) {
-            case "Error":
-                client.connectionError(reply[1]);
+    //Invoke with response and request, where request is only used for indicate the action within Failure Dialogs.
+    private void parseResponse(String response,String request) {
+        switch (Objects.requireNonNull(Response.getStatusString(response))) {
+//            case "Error":
+//                client.connectionError(reply[1]);
+//                break;
+            case "FAIL":
+                client.FailDialog(Response.getMessageString(response), String.valueOf(client.localReqHdl.getAction(request)));
                 break;
-            case "Fail":
-                client.contentWarning( reply[1]);
+            case "SUCCESS":
+//                client.successMessage();
                 break;
-            case "Success":
-                client.successMessage(this);
-                return true;
             default:
-                client.contentWarning(this,
-                        "Cannot decode reply message");
+                client.FailDialog("Unknown Failure", "Unknown Action");
+                break;
         }
-        return  false;
     }
 
     private void initComponents() {

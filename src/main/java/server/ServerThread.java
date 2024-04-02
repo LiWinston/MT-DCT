@@ -45,6 +45,7 @@ public class ServerThread implements Runnable {
                                         Response res = dict.add(word, meanings);
 //                                        out.writeChars (res.getMessage());
                                         out.writeUTF(res.toResponse() + "\n");
+                                        System.out.println("Response sent: " + res.toResponse());
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
                                     }
@@ -55,6 +56,7 @@ public class ServerThread implements Runnable {
                                     Response res = dict.delete(word);
                                     try {
                                         out.writeUTF(res.toResponse() + "\n");
+                                        System.out.println("Response sent: " + res.toResponse());
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
                                     }
@@ -66,6 +68,7 @@ public class ServerThread implements Runnable {
                                     Response res = dict.update(word, meanings);
                                     try {
                                         out.writeUTF(res.toResponse() + "\n");
+                                        System.out.println("Response sent: " + res.toResponse());
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
                                     }
@@ -76,6 +79,7 @@ public class ServerThread implements Runnable {
                                     Response res = dict.search(word);
                                     try {
                                         out.writeUTF(res.toResponse() + "\n");
+                                        System.out.println("Response sent: " + res.toResponse());
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
                                     }

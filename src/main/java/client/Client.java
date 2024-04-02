@@ -1,28 +1,21 @@
 package client;
 
 import prtc.Request;
-import prtc.Response;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.*;
-import java.net.ConnectException;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Random;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 public class Client implements Runnable {
-    private UI ui;
     BufferedReader b_iStream;
     String address;
     int port;
     Request localReqHdl = new Request();
+    Socket socket;
+    private UI ui;
     private DataInputStream in;
     private DataOutputStream out;
-    Socket socket;
 
     public static void main(String[] args) {
         if (args.length != 2) {
@@ -40,13 +33,12 @@ public class Client implements Runnable {
         } catch (NumberFormatException e) {
             System.out.println("Format err : integer required for port number");
         }
-        ui = new UI(client);
-
+        client.ui = new UI(client);
 
 
     }
 
-    protected void connect() throws IllegalArgumentException, IOException{
+    protected void connect() throws IllegalArgumentException, IOException {
         socket = new Socket(address, port);
         if (socket.isConnected()) {
             System.out.println("Connected to server: " + address + ":" + port);
@@ -81,7 +73,8 @@ public class Client implements Runnable {
                 try {
 //                    String response = b_iStream.readLine();
                     String response = in.readUTF();
-                    future.complete(Response.getStatusString(response) + ": " + Response.getMessageString(response) + " " + Response.getMeaningsString(response));
+                    future.complete(response);
+//                    future.complete(Response.getStatusString(response) + ": " + Response.getMessageString(response) + " " + Response.getMeaningsString(response));
                 } catch (IOException e) {
                     future.completeExceptionally(e);
                 }
@@ -95,41 +88,34 @@ public class Client implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("Client running");
-        ArrayList<String> Str = new ArrayList<>();
-        Str.add("ININININI;");
-        while (true) {
-            try {
-
-                String req1 = localReqHdl.createSearchRequest("apple");
-                CompletableFuture<String> res1 = sendRequest(req1);
-                System.out.println(STR."Request sent: \{req1}");
-                System.out.println(res1.get());
-
-
-                String req2 = localReqHdl.createUpdateRequest("apple", Str.toArray(new String[0]));
-                Str.add(new Random().nextInt(100) + ";");
-                CompletableFuture<String> res = sendRequest(req2);
-                System.out.println(STR."Request sent: \{req2}");
-                System.out.println(res.get());
-
-                String req3 = localReqHdl.createDeleteRequest("apple");
-                CompletableFuture<String> res3 = sendRequest(req3);
-                System.out.println(STR."Request sent: \{req3}");
-                System.out.println(res3.get());
-
-                String req4 = localReqHdl.createAddRequest("apple", Str.toArray(new String[0]));
-                CompletableFuture<String> res4 = sendRequest(req4);
-                System.out.println(STR."Request sent: \{req4}");
-                System.out.println(res4.get());
-
-            } catch (ExecutionException | InterruptedException e) {
-                System.out.println("Err: connection lost, closing now");
-                Thread.currentThread().interrupt();
-                disconnect();
-//                throw new RuntimeException(e);
-            }
-        }
+//        System.out.println("Client running");
+//        ArrayList<String> Str = new ArrayList<>();
+//        Str.add("ININININI;");
+//        while (true) {
+//
+//            String req1 = localReqHdl.createSearchRequest("apple");
+//            CompletableFuture<String> res1 = sendRequest(req1);
+//            System.out.println(STR."Request sent: \{req1}");
+//            System.out.println(res1.join());
+//
+//
+//            String req2 = localReqHdl.createUpdateRequest("apple", Str.toArray(new String[0]));
+//            Str.add(new Random().nextInt(100) + ";");
+//            CompletableFuture<String> res = sendRequest(req2);
+//            System.out.println(STR."Request sent: \{req2}");
+//            System.out.println(res.join());
+//
+//            String req3 = localReqHdl.createDeleteRequest("apple");
+//            CompletableFuture<String> res3 = sendRequest(req3);
+//            System.out.println(STR."Request sent: \{req3}");
+//            System.out.println(res3.join());
+//
+//            String req4 = localReqHdl.createAddRequest("apple", Str.toArray(new String[0]));
+//            CompletableFuture<String> res4 = sendRequest(req4);
+//            System.out.println(STR."Request sent: \{req4}");
+//            System.out.println(res4.join());
+//
+//        }
     }
 
     public void argError(String msg) {
@@ -155,10 +141,10 @@ public class Client implements Runnable {
     }
 
 
-    public void contentWarning(String msg) {
+    public void FailDialog(String msg, String title) {
         JOptionPane.showMessageDialog(ui,
-                "Content warning: " + msg,
-                "Warning",
+                msg,
+                "Fail",
                 JOptionPane.WARNING_MESSAGE);
     }
 
