@@ -1,7 +1,7 @@
 banana: a long fruit; a yellow fruit; a sweet fruit
 date: a brown fruit; a small fruit; a sweet fruit
 cherry: a red fruit; a small fruit; a sour fruit
-apple:2;4;7;5;9;1;7;3;2;69;92;42;2;55;6;90;1;47;19;86;73;71;22;30;28;61;18;18;21;45;66;12;68;36;54;38;47;63;86;27;81;71;30;35;87;91;39;20;16;14;42;87;18;37;34;80;46;74;24;25;45;17;61;98;38;12;83;16;55;99;47;61;10;47;26;67;83;95;19;35;84;17;17;22;13;19;39;28;53;35;95;71;85;43;40;13;20;56;83;64;90;12;18;79;61;86;89;24;42;98;20;53;93;14;48;20;46;42;26;18;78;32;74;47;77;76;98;ININININI;38;11;61;79;55;94;52;53;56;15;16;21;56;16;66;93;71;94;34;91;92;19;42;60;85;59;64;11;40;79;80;60;10;48;78;36;50;85
+apple: a fruit; a kind of fruit
 pear: a green fruit; a sweet fruit; a yellow fruit
 appleLLL:a fruit;a kind of fruit
 grape: a small fruit; a purple fruit; a sweet fruit

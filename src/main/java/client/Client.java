@@ -3,6 +3,8 @@ package client;
 import prtc.Request;
 import prtc.Response;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
@@ -13,13 +15,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class Client implements Runnable {
+    private UI ui;
     BufferedReader b_iStream;
     String address;
     int port;
     Request localReqHdl = new Request();
     private DataInputStream in;
     private DataOutputStream out;
-    private Socket socket;
+    Socket socket;
 
     public static void main(String[] args) {
         if (args.length != 2) {
@@ -28,7 +31,6 @@ public class Client implements Runnable {
         }
 
         Client client = new Client();
-        Thread clientThread = new Thread(client);
 
         client.address = args[0];
         client.port = 8500;
@@ -38,25 +40,8 @@ public class Client implements Runnable {
         } catch (NumberFormatException e) {
             System.out.println("Format err : integer required for port number");
         }
-//        new UI(client);
-        try {
-            client.connect();
-        } catch (UnknownHostException e) {
-            System.out.println("server address cannot be reached");
-        } catch (IllegalArgumentException e) {
-            System.out.println("port number over range");
-        } catch (ConnectException e) {
-            System.out.println("Connection declined or no server found, consider port number availability");
-        } catch (IOException e) {
-            System.out.println("The server is down, closing now");
-        }
-        if (client.socket != null) {
-            System.out.println("Client socket not null");
-            if (client.socket.isConnected()) {
-//            new UI(client);
-                clientThread.start();
-            }
-        }
+        ui = new UI(client);
+
 
 
     }
@@ -138,12 +123,6 @@ public class Client implements Runnable {
                 System.out.println(STR."Request sent: \{req4}");
                 System.out.println(res4.get());
 
-
-//                String req2 = localReqHdl.createDeleteRequest("apple");
-//                System.out.println(STR."Request sent: \{req2}");
-//                CompletableFuture<String> res2 = sendRequest(req2);
-//                System.out.println(res2.get());
-//                Thread.sleep(1000);
             } catch (ExecutionException | InterruptedException e) {
                 System.out.println("Err: connection lost, closing now");
                 Thread.currentThread().interrupt();
@@ -151,5 +130,43 @@ public class Client implements Runnable {
 //                throw new RuntimeException(e);
             }
         }
+    }
+
+    public void argError(String msg) {
+        System.err.println("Argument error: " + msg);
+        System.exit(1);
+    }
+
+
+    public void connectionError(String msg) {
+        JOptionPane.showMessageDialog(ui,
+                "Connection error: " + msg,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+        System.exit(1);
+    }
+
+
+    public void formatWarning(String msg) {
+        JOptionPane.showMessageDialog(ui,
+                "Format warning: " + msg,
+                "Warning",
+                JOptionPane.WARNING_MESSAGE);
+    }
+
+
+    public void contentWarning(String msg) {
+        JOptionPane.showMessageDialog(ui,
+                "Content warning: " + msg,
+                "Warning",
+                JOptionPane.WARNING_MESSAGE);
+    }
+
+
+    public void successMessage() {
+        JOptionPane.showMessageDialog(ui,
+                "Thanks for contributing,",
+                "Success",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 }
