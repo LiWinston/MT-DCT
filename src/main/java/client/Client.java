@@ -7,6 +7,8 @@ import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
 
+import static java.lang.System.exit;
+
 public class Client implements Runnable {
     BufferedReader b_iStream;
     String address;
@@ -80,8 +82,17 @@ public class Client implements Runnable {
                 }
             });
         } catch (IOException e) {
-            future.completeExceptionally(e);
-//            Thread.currentThread().interrupt();
+            JOptionPane.showMessageDialog(ui,
+                    e.getMessage(),
+                    "Connection error, please restart the client.",
+                    JOptionPane.WARNING_MESSAGE);
+            try {
+//                Thread.sleep(1000);
+                ui.dispose();
+                exit(1);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
         return future;
     }
@@ -120,7 +131,7 @@ public class Client implements Runnable {
 
     public void argError(String msg) {
         System.err.println("Argument error: " + msg);
-        System.exit(1);
+        exit(1);
     }
 
 
@@ -129,7 +140,7 @@ public class Client implements Runnable {
                 "Connection error: " + msg,
                 "Error",
                 JOptionPane.ERROR_MESSAGE);
-        System.exit(1);
+        exit(1);
     }
 
 

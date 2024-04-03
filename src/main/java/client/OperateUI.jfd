@@ -17,10 +17,11 @@ new FormModel {
 			}
 			add( new FormComponent( "javax.swing.JTextField" ) {
 				name: "searchTitle"
-				"editable": false
-				"font": new java.awt.Font( "Mistral", 3, 48 )
-				"text": "Yongchun Li"
+				"font": new java.awt.Font( "High Tower Text", 1, 35 )
+				"text": "Segment meanings by \";\""
 				"horizontalAlignment": 0
+				"editable": false
+				"focusable": false
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
 			add( new FormComponent( "javax.swing.JTextField" ) {
 				name: "searchBar"

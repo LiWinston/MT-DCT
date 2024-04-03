@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class OperateUI extends JPanel {
-    private static final int MAX_WORD_LENGTH = 25;
+    private static final int MAX_WORD_LENGTH = 30;
 
     protected Client client;
     public OperateUI(Client client) {
@@ -215,10 +215,11 @@ public class OperateUI extends JPanel {
         ((GridBagLayout)getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 1.0E-4};
 
         //---- searchTitle ----
-        searchTitle.setEditable(false);
-        searchTitle.setFont(new Font("Mistral", Font.BOLD | Font.ITALIC, 48));
-        searchTitle.setText("Yongchun Li");
+        searchTitle.setFont(new Font("High Tower Text", Font.BOLD, 35));
+        searchTitle.setText("Segment meanings by \";\"");
         searchTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        searchTitle.setEditable(false);
+        searchTitle.setFocusable(false);
         searchTitle.setName("searchTitle");
         add(searchTitle, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,

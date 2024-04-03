@@ -86,6 +86,7 @@ public class UI extends JFrame {
             WelcomeMsg.setText("Welcome to MT-DCT, Click Connect to  Start");
             WelcomeMsg.setHorizontalAlignment(SwingConstants.CENTER);
             WelcomeMsg.setMinimumSize(null);
+            WelcomeMsg.setFocusable(false);
             WelcomeMsg.setName("WelcomeMsg");
             Welcome.add(WelcomeMsg, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,

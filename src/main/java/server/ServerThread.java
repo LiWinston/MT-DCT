@@ -92,7 +92,9 @@ public class ServerThread implements Runnable {
                     dict.saveToFile();
                 }
             }
-        } catch (IOException e) {
+        } catch (UTFDataFormatException ue){
+
+        } catch(IOException e) {
 //            throw new RuntimeException(e);
             System.out.println("Err: Lost connection to Client " + socket.getRemoteSocketAddress());
             try {

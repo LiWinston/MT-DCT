@@ -24,6 +24,7 @@ new FormModel {
 					"text": "Welcome to MT-DCT, Click Connect to  Start"
 					"horizontalAlignment": 0
 					"minimumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
+					"focusable": false
 				}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
 				add( new FormComponent( "javax.swing.JButton" ) {
 					name: "connectButton"
