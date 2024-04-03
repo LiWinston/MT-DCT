@@ -86,11 +86,12 @@ public class Client implements Runnable {
                     e.getMessage()+
                             "Connection error, press yes to retry, no to exit",
                     "Fail",
-                    JOptionPane.OK_CANCEL_OPTION);
-            if (choice == JOptionPane.OK_OPTION) {
+                    JOptionPane.YES_NO_OPTION);
+            if (choice == JOptionPane.YES_OPTION) {
                 try {
 //                    disconnect();
                     connect();
+                    return sendRequest(s);//Fix UI freeze here, must return the future after reconnecting
                 } catch (IOException ioException) {
                     connectionError(ioException.getMessage());
                 }
