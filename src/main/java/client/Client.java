@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 import static java.lang.System.exit;
 
@@ -135,18 +136,22 @@ public class Client implements Runnable {
 //        }
     }
 
-    public void argError(String msg) {
-        System.err.println("Argument error: " + msg);
-        exit(1);
-    }
-
 
     public void connectionError(String msg) {
-        JOptionPane.showMessageDialog(ui,
-                "Connection error: " + msg,
+        int choice = JOptionPane.showConfirmDialog(ui,
+                "Connection error: " + msg + ", press yes to retry, no to exit",
                 "Error",
-                JOptionPane.ERROR_MESSAGE);
-        exit(1);
+                JOptionPane.YES_NO_OPTION);
+        if (choice == JOptionPane.YES_OPTION) {
+            try {
+                connect();
+            } catch (IOException e) {
+                connectionError(e.getMessage());
+            }
+        } else {
+            exit(1);
+        }
+
     }
 
 
@@ -158,18 +163,23 @@ public class Client implements Runnable {
     }
 
 
-    public void FailDialog(String msg, String title) {
+    public void FailDialog(String msg) {
         JOptionPane.showMessageDialog(ui,
                 msg,
                 "Fail",
                 JOptionPane.WARNING_MESSAGE);
     }
-
-
-    public void successMessage() {
+    public void FailDialog(String msg, String title) {
         JOptionPane.showMessageDialog(ui,
-                "Thanks for contributing,",
-                "Success",
+                msg,
+                title,
+                JOptionPane.WARNING_MESSAGE);
+    }
+
+    public void SuccessDialog(String msg, String title) {
+        JOptionPane.showMessageDialog(ui,
+                msg,
+                title,
                 JOptionPane.INFORMATION_MESSAGE);
     }
 }

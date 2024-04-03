@@ -40,6 +40,7 @@ public class UI extends JFrame {
             System.out.println("port number over range");
         } catch (ConnectException e) {
             System.out.println("Connection declined or no server found, consider port number availability");
+            client.connectionError("Refused or no server found");
         } catch (IOException e) {
             System.out.println("The server is down, closing now");
         }

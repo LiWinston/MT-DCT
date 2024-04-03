@@ -1,7 +1,16 @@
 banana: a long fruit; a yellow fruit; a sweet fruit
 date: a brown fruit; a small fruit; a sweet fruit
+asada:dasd
 cherry: a red fruit; a small fruit; a sour fruit
-apple: a fruit; a kind of fruit
-pear: a green fruit; a sweet fruit; a yellow fruit
-appleLLL:a fruit;a kind of fruit
+asda:sadd
+dfsdfg:sdfsd
+sx:1212;123233
+dzsd:ffff;sdffsd
+asas:asa
+asdasd:das
 grape: a small fruit; a purple fruit; a sweet fruit
+pear: a green fruit; a sweet fruit; a yellow fruit
+adsad:dsds;dsdssddsdsd
+appleLLL:a fruit;a kind of fruit
+asdad:dssd
+asdasdas:dasd

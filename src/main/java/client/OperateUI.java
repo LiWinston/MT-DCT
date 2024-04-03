@@ -45,64 +45,40 @@ public class OperateUI extends JPanel {
     }
 
     private boolean meaningsFormatCheck() {
-        StringBuilder sb = new StringBuilder(meaningsText.getText());
+        String originalText = meaningsText.getText().trim(); // 获取用户输入的意思文本，去除首尾空格
+        StringBuilder sb = new StringBuilder();
         boolean isCorrect = true;
-        // Add '-' to the beginning.
-        if (sb.charAt(0) != '-') sb.insert(0, '-');
-        // Delete all empty meanings, i.e delete all new line characters
-        // following a '-' mark. Also delete all slashes '/'.
-        for (int i = 1; i < sb.length(); i++) {
-            if (sb.charAt(i) == '\n' && sb.charAt(i - 1) == '-'
-                    || sb.charAt(i) == '/') {
-                sb.deleteCharAt(i);
-                i--;
+
+        // 去除多余的分号，并确保每个意思之间只有一个分号
+        String[] meanings = originalText.split(";");
+        for (String meaning : meanings) {
+            String trimmedMeaning = meaning.trim(); // 去除意思的首尾空格
+            if (!trimmedMeaning.isEmpty()) {
+                sb.append(trimmedMeaning).append(";"); // 添加意思和分号
             }
         }
-        // Ensure all '-' except the first one start from a new line
-        for (int i = 0; i < sb.length(); i++) {
-            if (sb.charAt(i) == '-') {
-                if (i != 0 && sb.charAt(i - 1) != '\n')
-                    sb.insert(i, '\n');
-                while (i < sb.length() - 1 && sb.charAt(i + 1) == '-')
-                    i++;
-            }
+
+        // 将最后一个分号去除
+        if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ';') {
+            sb.deleteCharAt(sb.length() - 1);
         }
-        // The last line of meanings could be empty, detect and delete
-        int j = sb.length() - 1;
-        while(j >= 0) {
-            if (sb.charAt(j) == '-' || sb.charAt(j) == '\n') {
-                sb.deleteCharAt(j);
-                j--;
-            } else
-                break;
-        }
-        // Revise all continuous '-' to have length of 2.
-        for (int i = 0; i < sb.length(); i++) {
-            if (sb.charAt(i) == '-') {
-                i++;
-                if (i == sb.length()) {
-                    sb.append('-');
-                } else if (sb.charAt(i) != '-') {
-                    sb.insert(i, '-');
-                } else {
-                    while (i + 1 < sb.length() && sb.charAt(i + 1) == '-') {
-                        sb.deleteCharAt(i + 1);
-                    }
-                }
-            }
-        }
-        isCorrect = sb.toString().equals(meaningsText.getText());
+
+        // 检查意思文本是否被修改
+        isCorrect = sb.toString().equals(originalText);
+
+        // 更新意思文本框的内容
         meaningsText.setText(sb.toString());
-        if (!isCorrect)
+
+        // 如果格式不正确，显示警告信息
+        if (!isCorrect) {
             client.formatWarning(
-                    "Your meanings input has incorrect format\n" +
-                            "We have corrected for you, please double check.\n" +
-                            "Remember: each meaning starts with -- from a " +
-                            "new line.\nNo empty meaning allowed.\n" +
-                            "No slash marks (/) allowed\n" +
-                            "No trailing new line or dashes allowed.");
+                    "separate meanings by \";\".\n" +
+                            "Auto correct complete, please resubmit.");
+        }
+
         return isCorrect;
     }
+
 
 
     private void searchBarCaretUpdate(CaretEvent e) {
@@ -125,22 +101,14 @@ public class OperateUI extends JPanel {
         addButton.setEnabled(!searchBarText.isEmpty() && !meaningsAreaText.isEmpty());
         updateButton.setEnabled(!searchBarText.isEmpty() && !meaningsAreaText.isEmpty());
     }
-    //////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
     private void searchButtonActionPerformed(ActionEvent e) {
         if (searchBarFormatCheck()) {
             String req = client.localReqHdl.createSearchRequest(searchBar.getText());
             CompletableFuture<String> res = client.sendRequest(req);
-            try {
-                System.out.println(STR."received response: \{res.get()}");
-                parseResponse(Objects.requireNonNull(res.join()), req);
-                meaningsText.setText(Response.getMeaningsString(res.join()));
-            } catch (InterruptedException | ExecutionException ex) {
-                throw new RuntimeException(ex);
-            }
+            parseResponse(Objects.requireNonNull(res.join()), req);
+            meaningsText.setText(Response.getMeaningsString(res.join()));
         }
     }
 
@@ -162,7 +130,8 @@ public class OperateUI extends JPanel {
             );
             CompletableFuture<String> res = client.sendRequest(req);
             parseResponse(Objects.requireNonNull(res.join()), req);
-            meaningsText.setText("");
+//            meaningsText.setText("");
+            // seems not necessary after adding since user may want to see the present meanings and conduct update then
         }
     }
 
@@ -173,24 +142,27 @@ public class OperateUI extends JPanel {
             );
             CompletableFuture<String> res = client.sendRequest(req);
             parseResponse(Objects.requireNonNull(res.join()), req);
-            meaningsText.setText(Response.getMeaningsString(res.join()));
+            if (Objects.equals(Response.getStatusString(res.join()), "SUCCESS")) {
+                meaningsText.setText(Response.getMeaningsString(res.join()));
+            }
         }
     }
 
     //Invoke with response and request, where request is only used for indicate the action within Failure Dialogs.
     private void parseResponse(String response,String request) {
+        System.out.println(STR."received response: \{response}");
         switch (Objects.requireNonNull(Response.getStatusString(response))) {
 //            case "Error":
 //                client.connectionError(reply[1]);
 //                break;
             case "FAIL":
-                client.FailDialog(Response.getMessageString(response), String.valueOf(client.localReqHdl.getAction(request)));
+                client.FailDialog(Response.getMessageString(response) + Response.getMeaningsString(response), STR."\{String.valueOf(client.localReqHdl.getAction(request))} Failure");
                 break;
             case "SUCCESS":
-//                client.successMessage();
+                client.SuccessDialog(Response.getMessageString(response) + Response.getMeaningsString(response), STR."\{String.valueOf(client.localReqHdl.getAction(request))} Success");
                 break;
             default:
-                client.FailDialog("Unknown Failure", "Unknown Action");
+                client.FailDialog("Unknown Failure");
                 break;
         }
     }

@@ -60,15 +60,15 @@ public class Dict {
         System.out.println("Dictionary init successfully!");
     }
 
-    public static void main(String[] args) {
-        Dict dict = new Dict("dictionary.txt");
-//        System.out.println(dict.innerSearchsearch("banana"));
-//        System.out.println(dict.add("appleLLL", "a fruit"));
-        System.out.println(dict.add("appleLLL", "a"));
-        System.out.println(dict.update("apple", "a kind of fruit"));
-        dict.printDictionaryInfo();
-        dict.close();
-    }
+//    public static void main(String[] args) {
+//        Dict dict = new Dict("dictionary.txt");
+////        System.out.println(dict.innerSearchsearch("banana"));
+////        System.out.println(dict.add("appleLLL", "a fruit"));
+//        System.out.println(dict.add("appleLLL", "a"));
+//        System.out.println(dict.update("apple", "a kind of fruit"));
+//        dict.printDictionaryInfo();
+//        dict.close();
+//    }
 
     public Map<String, PriorityQueue<String>> getDictionary() {
         return Collections.unmodifiableMap(dictionary);
@@ -168,11 +168,11 @@ public class Dict {
             return newMeanings;
         });
 
-//        return (updatedMeanings != null) && !isNoNewMeaning.get();
-        if (updatedMeanings != null && !isNoNewMeaning.get()) {
-            return new Response(true, "Word " + word + " updated successfully, New meanings: ", String.join(";", updatedMeanings));
-        } else if (isNoNewMeaning.get()) {
-            return new Response(true, "No new meaning to update, everything remains.");
+        if (updatedMeanings != null) {
+            String resMeanings = String.join(";", updatedMeanings);
+            if (isNoNewMeaning.get())
+                return new Response(true, "No new meaning to update, everything remains", resMeanings);
+            else return new Response(true, STR."Word \{word} updated successfully, New meanings: ", resMeanings);
         } else {
             return new Response(false, "Word " + word + " Not Found, update failed");
         }
