@@ -74,33 +74,15 @@ public class Client implements Runnable {
                 try {
                     String response = in.readUTF();
                     future.get().complete(response);
+                    return future;
                 } catch (IOException e) {
-//                    future.completeExceptionally(e);
-                    future.set(connectionError(e.getMessage(), s));
+////                    future.completeExceptionally(e);
+//                    connectionErrorCallback(() -> sendRequest(s));
                 }
-                return future;
+                return sendRequest(s);
             });
         } catch (IOException e) {
-            int choice = JOptionPane.showConfirmDialog(ui,
-                    e.getMessage()+
-                            "Connection error, press yes to retry, no to exit",
-                    "Fail",
-                    JOptionPane.YES_NO_OPTION);
-            if (choice == JOptionPane.YES_OPTION) {
-                try {
-//                    disconnect();
-                    connect();
-                    JOptionPane.showMessageDialog(ui,
-                            "Connection re-established",
-                            "Success",
-                            JOptionPane.INFORMATION_MESSAGE);
-                    return sendRequest(s);
-                } catch (IOException ioException) {
-                    return connectionError(ioException.getMessage(),s);
-                }
-            } else {
-                exit(1);
-            }
+            connectionErrorCallback(() -> sendRequest(s));
 
         }
         return future.get();
@@ -155,12 +137,33 @@ public class Client implements Runnable {
                         JOptionPane.INFORMATION_MESSAGE);
                 return sendRequest(s);
             } catch (IOException e) {
-                connectionError(e.getMessage(),s);
+                connectionErrorCallback(() -> sendRequest(s));
             }
         } else {
             exit(1);
         }
         return null;
+    }
+
+    public void connectionErrorCallback(Runnable callback) {
+        int choice = JOptionPane.showConfirmDialog(ui,
+                "Connection error: Press yes to retry, no to exit",
+                "Error",
+                JOptionPane.YES_NO_OPTION);
+        if (choice == JOptionPane.YES_OPTION) {
+            try {
+                connect();
+                JOptionPane.showMessageDialog(ui,
+                        "Connection re-established",
+                        "Success",
+                        JOptionPane.INFORMATION_MESSAGE);
+                callback.run(); // 执行回调函数
+            } catch (IOException e) {
+                connectionErrorCallback(callback); // 递归调用自身，直到重连成功
+            }
+        } else {
+            exit(1);
+        }
     }
 
     public void formatWarning(String msg) {
