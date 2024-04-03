@@ -167,7 +167,7 @@ public class Client implements Runnable {
         JOptionPane.showMessageDialog(ui,
                 msg,
                 "Fail",
-                JOptionPane.WARNING_MESSAGE);
+                JOptionPane.ERROR_MESSAGE);
     }
     public void FailDialog(String msg, String title) {
         JOptionPane.showMessageDialog(ui,

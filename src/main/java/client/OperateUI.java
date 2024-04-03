@@ -45,31 +45,31 @@ public class OperateUI extends JPanel {
     }
 
     private boolean meaningsFormatCheck() {
-        String originalText = meaningsText.getText().trim(); // 获取用户输入的意思文本，去除首尾空格
+        String originalText = meaningsText.getText().trim(); // Get the meaning text input by the user and remove the leading and trailing spaces
         StringBuilder sb = new StringBuilder();
         boolean isCorrect = true;
 
-        // 去除多余的分号，并确保每个意思之间只有一个分号
+        // Remove extra semicolons and make sure there is only one semicolon between each meaning
         String[] meanings = originalText.split(";");
         for (String meaning : meanings) {
-            String trimmedMeaning = meaning.trim(); // 去除意思的首尾空格
+            String trimmedMeaning = meaning.trim(); // Remove leading and trailing spaces of meaning
             if (!trimmedMeaning.isEmpty()) {
-                sb.append(trimmedMeaning).append(";"); // 添加意思和分号
+                sb.append(trimmedMeaning).append(";"); // Add meaning and semicolon
             }
         }
 
-        // 将最后一个分号去除
+        // Remove the last semicolon if it exists
         if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ';') {
             sb.deleteCharAt(sb.length() - 1);
         }
 
-        // 检查意思文本是否被修改
+        // Check if the meaning text has been modified
         isCorrect = sb.toString().equals(originalText);
 
-        // 更新意思文本框的内容
+        // Update the contents of the meaning text box
         meaningsText.setText(sb.toString());
 
-        // 如果格式不正确，显示警告信息
+        // If the format is incorrect, display a warning message
         if (!isCorrect) {
             client.formatWarning(
                     "separate meanings by \";\".\n" +
@@ -162,7 +162,7 @@ public class OperateUI extends JPanel {
                 client.SuccessDialog(Response.getMessageString(response) + Response.getMeaningsString(response), STR."\{String.valueOf(client.localReqHdl.getAction(request))} Success");
                 break;
             default:
-                client.FailDialog("Unknown Failure");
+                client.FailDialog("Broken response");
                 break;
         }
     }
