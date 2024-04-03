@@ -6,7 +6,6 @@ import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 
 import static java.lang.System.exit;
 
@@ -92,9 +91,13 @@ public class Client implements Runnable {
                 try {
 //                    disconnect();
                     connect();
+                    JOptionPane.showMessageDialog(ui,
+                            "Connection re-established",
+                            "Success",
+                            JOptionPane.INFORMATION_MESSAGE);
                     return sendRequest(s);//Fix UI freeze here, must return the future after reconnecting
                 } catch (IOException ioException) {
-                    connectionError(ioException.getMessage());
+                    return connectionError(ioException.getMessage(),s);
                 }
             } else {
                 exit(1);
@@ -118,15 +121,35 @@ public class Client implements Runnable {
         if (choice == JOptionPane.YES_OPTION) {
             try {
                 connect();
+                JOptionPane.showMessageDialog(ui,
+                        "Connection re-established",
+                        "Success",
+                        JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException e) {
                 connectionError(e.getMessage());
             }
         } else {
             exit(1);
         }
-
     }
 
+    public CompletableFuture<String> connectionError(String msg, String s) {
+        int choice = JOptionPane.showConfirmDialog(ui,
+                "Connection error: " + msg + ", press yes to retry, no to exit",
+                "Error",
+                JOptionPane.YES_NO_OPTION);
+        if (choice == JOptionPane.YES_OPTION) {
+            try {
+                connect();
+                return sendRequest(s);
+            } catch (IOException e) {
+                connectionError(e.getMessage());
+            }
+        } else {
+            exit(1);
+        }
+        return null;
+    }
 
     public void formatWarning(String msg) {
         JOptionPane.showMessageDialog(ui,
