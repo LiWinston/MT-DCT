@@ -82,17 +82,22 @@ public class Client implements Runnable {
                 }
             });
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(ui,
-                    e.getMessage(),
-                    "Connection error, please restart the client.",
-                    JOptionPane.WARNING_MESSAGE);
-            try {
-//                Thread.sleep(1000);
-                ui.dispose();
+            int choice = JOptionPane.showConfirmDialog(ui,
+                    e.getMessage()+
+                            "Connection error, press yes to retry, no to exit",
+                    "Fail",
+                    JOptionPane.OK_CANCEL_OPTION);
+            if (choice == JOptionPane.OK_OPTION) {
+                try {
+//                    disconnect();
+                    connect();
+                } catch (IOException ioException) {
+                    connectionError(ioException.getMessage());
+                }
+            } else {
                 exit(1);
-            } catch (Exception ex) {
-                ex.printStackTrace();
             }
+
         }
         return future;
     }
