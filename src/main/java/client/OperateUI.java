@@ -4,7 +4,6 @@
 
 package client;
 
-import prtc.Request;
 import prtc.Response;
 
 import javax.swing.*;
@@ -14,7 +13,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 public class OperateUI extends JPanel {
     private static final int MAX_WORD_LENGTH = 30;
@@ -25,26 +23,23 @@ public class OperateUI extends JPanel {
         initComponents();
     }
 
-    private boolean searchBarFormatCheck() {
-        StringBuilder sb = new StringBuilder(searchBar.getText().toLowerCase());
-        boolean isCorrect = true;
-        for (int i = 0; i < sb.length(); i++) {
-            if (sb.charAt(i) < 'a' || sb.charAt(i) > 'z') {
-                isCorrect = false;
-                sb.deleteCharAt(i);
-                i--;
-            }
-        }
-        searchBar.setText(sb.toString());
-        if (!isCorrect){
+    private boolean wordFormatter() {
+        String str = searchBar.getText().trim().toLowerCase();
+//        StringBuilder sb = new StringBuilder();
+
+        boolean formatted = str.chars().allMatch(Character::isLetter);
+
+        if (!formatted){
+            str = str.replaceAll("[^a-zA-Z]", "");
             client.formatWarning(
                     "the word must not contain non-alphabet characters.\n" +
                             "We have corrected for you, please resubmit.");
         }
-        return isCorrect;
+        searchBar.setText(str);
+        return formatted;
     }
 
-    private boolean meaningsFormatCheck() {
+    private boolean meaningsFormatter() {
         String originalText = meaningsText.getText().trim(); // Get the meaning text input by the user and remove the leading and trailing spaces
         StringBuilder sb = new StringBuilder();
         boolean isCorrect = true;
@@ -104,7 +99,7 @@ public class OperateUI extends JPanel {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
     private void searchButtonActionPerformed(ActionEvent e) {
-        if (searchBarFormatCheck()) {
+        if (wordFormatter()) {
             String req = client.localReqHdl.createSearchRequest(searchBar.getText());
             CompletableFuture<String> res = client.sendRequest(req);
             parseResponse(Objects.requireNonNull(res.join()), req);
@@ -114,7 +109,7 @@ public class OperateUI extends JPanel {
 
 
     private void deleteButtonActionPerformed(ActionEvent e) {
-        if (searchBarFormatCheck()) {
+        if (wordFormatter()) {
             String req = client.localReqHdl.createDeleteRequest(searchBar.getText());
             CompletableFuture<String> res = client.sendRequest(req);
             parseResponse(Objects.requireNonNull(res.join()), req);
@@ -124,19 +119,19 @@ public class OperateUI extends JPanel {
 
 
     private void addButtonActionPerformed(ActionEvent e) {
-        if (searchBarFormatCheck() && meaningsFormatCheck()) {
+        if (wordFormatter() && meaningsFormatter()) {
             String req = client.localReqHdl.createAddRequest(
                     searchBar.getText(), meaningsText.getText().split("\n")
             );
             CompletableFuture<String> res = client.sendRequest(req);
             parseResponse(Objects.requireNonNull(res.join()), req);
-//            meaningsText.setText("");
             // seems not necessary after adding since user may want to see the present meanings and conduct update then
+            meaningsText.setText("");
         }
     }
 
     private void updateButtonActionPerformed(ActionEvent e) {
-        if (searchBarFormatCheck() && meaningsFormatCheck()) {
+        if (wordFormatter() && meaningsFormatter()) {
             String req = client.localReqHdl.createUpdateRequest(
                     searchBar.getText(), meaningsText.getText().split("\n")
             );
