@@ -42,7 +42,7 @@ public class OperateUI extends JPanel {
     private boolean meaningsFormatter() {
         String originalText = meaningsText.getText().trim(); // Get the meaning text input by the user and remove the leading and trailing spaces
         StringBuilder sb = new StringBuilder();
-        boolean isCorrect = true;
+        boolean formatted = true;
 
         // Remove extra semicolons and make sure there is only one semicolon between each meaning
         String[] meanings = originalText.split(";");
@@ -59,19 +59,18 @@ public class OperateUI extends JPanel {
         }
 
         // Check if the meaning text has been modified
-        isCorrect = sb.toString().equals(originalText);
+        formatted = sb.toString().equals(originalText);
 
         // Update the contents of the meaning text box
         meaningsText.setText(sb.toString());
 
         // If the format is incorrect, display a warning message
-        if (!isCorrect) {
+        if (!formatted) {
             client.formatWarning(
                     "separate meanings by \";\".\n" +
                             "Auto correct complete, please resubmit.");
         }
-
-        return isCorrect;
+        return formatted;
     }
 
 
