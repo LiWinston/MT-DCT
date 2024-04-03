@@ -30,10 +30,10 @@ public class OperateUI extends JPanel {
         boolean formatted = str.chars().allMatch(Character::isLetter);
 
         if (!formatted){
-            str = str.replaceAll("[^a-zA-Z]", "");
+            str = str.replaceAll("[^A-z]", "");
             client.formatWarning(
-                    "the word must not contain non-alphabet characters.\n" +
-                            "We have corrected for you, please resubmit.");
+                    "Only alphabet allowed.\n" +
+                            "Non-alphabet chars eliminated.");
         }
         searchBar.setText(str);
         return formatted;
