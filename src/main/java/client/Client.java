@@ -95,7 +95,7 @@ public class Client implements Runnable {
                             "Connection re-established",
                             "Success",
                             JOptionPane.INFORMATION_MESSAGE);
-                    return sendRequest(s);//Fix UI freeze here, must return the future after reconnecting
+                    return sendRequest(s);
                 } catch (IOException ioException) {
                     return connectionError(ioException.getMessage(),s);
                 }
@@ -110,9 +110,17 @@ public class Client implements Runnable {
     @Override
     public void run() {
         //超时逻辑
+//while (true) {
+//            try {
+//                connect();
+//                break;
+//            } catch (IOException e) {
+//                connectionError(e.getMessage());
+//            }
+//        }
     }
 
-
+    //非请求积压式重连 Non-request backlog reconnection
     public void connectionError(String msg) {
         int choice = JOptionPane.showConfirmDialog(ui,
                 "Connection error: " + msg + ", press yes to retry, no to exit",
@@ -133,6 +141,7 @@ public class Client implements Runnable {
         }
     }
 
+    //请求积压 重连再发送 Request backlog reconnection
     public CompletableFuture<String> connectionError(String msg, String s) {
         int choice = JOptionPane.showConfirmDialog(ui,
                 "Connection error: " + msg + ", press yes to retry, no to exit",
@@ -141,9 +150,13 @@ public class Client implements Runnable {
         if (choice == JOptionPane.YES_OPTION) {
             try {
                 connect();
+                JOptionPane.showMessageDialog(ui,
+                        "Connection re-established",
+                        "Success",
+                        JOptionPane.INFORMATION_MESSAGE);
                 return sendRequest(s);
             } catch (IOException e) {
-                connectionError(e.getMessage());
+                connectionError(e.getMessage(),s);
             }
         } else {
             exit(1);
