@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.System.exit;
 
@@ -66,20 +67,18 @@ public class Client implements Runnable {
 
 
     protected CompletableFuture<String> sendRequest(String s) {
-        CompletableFuture<String> future = new CompletableFuture<>();
+        AtomicReference<CompletableFuture<String>> future = new AtomicReference<>(new CompletableFuture<>());
         try {
             out.writeBytes(STR."\{s}\n");
-//            out.flush();
-            // 异步接收服务器的响应
-            CompletableFuture.runAsync(() -> {
+            CompletableFuture.supplyAsync(() -> {
                 try {
-//                    String response = b_iStream.readLine();
                     String response = in.readUTF();
-                    future.complete(response);
-//                    future.complete(Response.getStatusString(response) + ": " + Response.getMessageString(response) + " " + Response.getMeaningsString(response));
+                    future.get().complete(response);
                 } catch (IOException e) {
-                    future.completeExceptionally(e);
+//                    future.completeExceptionally(e);
+                    future.set(connectionError(e.getMessage(), s));
                 }
+                return future;
             });
         } catch (IOException e) {
             int choice = JOptionPane.showConfirmDialog(ui,
@@ -104,7 +103,7 @@ public class Client implements Runnable {
             }
 
         }
-        return future;
+        return future.get();
     }
 
     @Override
