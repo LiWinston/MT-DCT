@@ -96,13 +96,13 @@ public class ServerThread implements Runnable {
 
         } catch(IOException e) {
 //            throw new RuntimeException(e);
-            System.out.println("Err: Lost connection to Client " + socket.getRemoteSocketAddress());
-//            try {
-//                socket.close();
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-//                System.out.println("Err: Unable to close the connection");
-//            }
+            System.out.println(STR."Err: Lost connection to Client \{socket.getRemoteSocketAddress()} Closing connection thread");
+            try {
+                socket.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                System.out.println("Err: Unable to close the connection");
+            }
         }
     }
 }
