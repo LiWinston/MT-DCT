@@ -125,7 +125,8 @@ public class OperateUI extends JPanel {
             CompletableFuture<String> res = client.sendRequest(req);
             parseResponse(Objects.requireNonNull(res.join()), req);
             // seems not necessary after adding since user may want to see the present meanings and conduct update then
-            meaningsText.setText("");
+//            meaningsText.setText("");
+            meaningsText.setText(Response.getMeaningsString(res.join()));
         }
     }
 

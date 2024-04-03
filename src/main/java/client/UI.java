@@ -42,7 +42,7 @@ public class UI extends JFrame {
             System.out.println("Connection declined or no server found, consider port number availability");
             client.connectionError("Refused or no server found");
         } catch (IOException e) {
-            System.out.println("The server is down, closing now");
+            System.out.println("The server is down");
         }
         if (client.socket != null) {
             System.out.println("Client socket not null");
