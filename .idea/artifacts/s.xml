@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="s">
+  <artifact type="jar" name="s">
     <output-path>$PROJECT_DIR$/out/artifacts/s</output-path>
     <root id="archive" name="MT-DCT.jar">
       <element id="directory" name="META-INF">
