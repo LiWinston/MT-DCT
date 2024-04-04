@@ -13,8 +13,12 @@ public class SymbolMatch {
 
         // 遍历字符串中的每个字符
         for (char c : target.toCharArray()) {
+            // 如果是字母文字，直接添加到结果中
+            if (Character.isLetter(c)) {
+                result.append(c);
+            }
             // 如果是左括号，入栈
-            if (c == '(' || c == '[' || c == '{') {
+            else if (c == '(' || c == '[' || c == '{') {
                 stack.push(c);
                 result.append(c);
             }
@@ -29,10 +33,6 @@ public class SymbolMatch {
                     stack.pop();
                     result.append(c);
                 }
-            }
-            // 如果不是括号，则直接添加到结果中
-            else {
-                result.append(c);
             }
         }
 
