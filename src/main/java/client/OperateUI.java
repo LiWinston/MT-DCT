@@ -11,8 +11,11 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.CaretEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+
+import static client.SymbolMatch.checkMatchandDeleteIllegal;
 
 public class OperateUI extends JPanel {
     private static final int MAX_WORD_LENGTH = 30;
@@ -30,7 +33,7 @@ public class OperateUI extends JPanel {
         boolean formatted = str.chars().allMatch(Character::isLetter);
 
         if (!formatted){
-            str = str.replaceAll("[^A-z]", "");
+            str = str.replaceAll("[^A-Za-z]", "");
             client.formatWarning(
                     "Only alphabet allowed.\n" +
                             "Non-alphabet chars eliminated.");
@@ -46,17 +49,25 @@ public class OperateUI extends JPanel {
 
         // Remove extra semicolons and make sure there is only one semicolon between each meaning
         String[] meanings = originalText.split(";");
+        ArrayList<String> trimmedMeanings = new ArrayList<>();
         for (String meaning : meanings) {
             String trimmedMeaning = meaning.trim(); // Remove leading and trailing spaces of meaning
             if (!trimmedMeaning.isEmpty()) {
-                sb.append(trimmedMeaning).append(";"); // Add meaning and semicolon
+//                sb.append(trimmedMeaning).append(";"); // Add meaning and semicolon
+                trimmedMeanings.add(trimmedMeaning);
             }
+        }
+        //illegal usage of character elimination
+        for(String meaning : trimmedMeanings) {
+            sb.append(checkMatchandDeleteIllegal(meaning)).append(";");
         }
 
         // Remove the last semicolon if it exists
         if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ';') {
             sb.deleteCharAt(sb.length() - 1);
         }
+
+
 
         // Check if the meaning text has been modified
         formatted = sb.toString().equals(originalText);

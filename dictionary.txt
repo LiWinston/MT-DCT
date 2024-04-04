@@ -9,6 +9,7 @@ dzsd:ffff;sdffsd
 asas:asa
 asdasd:das
 grape: a small fruit; a purple fruit; a sweet fruit
+dsdsd:(){}[]
 pear: a green fruit; a sweet fruit; a yellow fruit
 adsad:dsds;dsdssddsdsd
 appleLLL:a fruit;a kind of fruit
