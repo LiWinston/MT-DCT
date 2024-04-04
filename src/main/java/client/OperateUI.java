@@ -198,6 +198,8 @@ public class OperateUI extends JPanel {
         searchTitle.setHorizontalAlignment(SwingConstants.CENTER);
         searchTitle.setEditable(false);
         searchTitle.setFocusable(false);
+        searchTitle.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        searchTitle.setBackground(new Color(0x30cfcce5, true));
         searchTitle.setName("searchTitle");
         add(searchTitle, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -206,9 +208,10 @@ public class OperateUI extends JPanel {
         //---- searchBar ----
         searchBar.setToolTipText("Type your word here (Maximum 25 chars)");
         searchBar.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 36));
+        searchBar.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
         searchBar.setName("searchBar");
         searchBar.addCaretListener(e -> searchBarCaretUpdate(e));
-        add(searchBar, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+        add(searchBar, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 0, 5, 5), 0, 0));
 
@@ -218,6 +221,7 @@ public class OperateUI extends JPanel {
         searchButton.setToolTipText("Alt+s to search");
         searchButton.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 36));
         searchButton.setEnabled(false);
+        searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         searchButton.setName("searchButton");
         searchButton.addActionListener(e -> searchButtonActionPerformed(e));
         add(searchButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
@@ -237,7 +241,7 @@ public class OperateUI extends JPanel {
             meaningsText.addCaretListener(e -> meaningsTextCaretUpdate(e));
             meaningsSpace.setViewportView(meaningsText);
         }
-        add(meaningsSpace, new GridBagConstraints(0, 2, 1, 3, 0.0, 0.0,
+        add(meaningsSpace, new GridBagConstraints(0, 2, 1, 3, 3.0, 3.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 0, 0, 5), 0, 0));
 
@@ -247,9 +251,10 @@ public class OperateUI extends JPanel {
         addButton.setToolTipText("Add a new word with meanings");
         addButton.setMnemonic('A');
         addButton.setEnabled(false);
+        addButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         addButton.setName("addButton");
         addButton.addActionListener(e -> addButtonActionPerformed(e));
-        add(addButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
+        add(addButton, new GridBagConstraints(1, 2, 1, 1, 0.0, 1.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 0, 5, 0), 0, 0));
 
@@ -259,9 +264,10 @@ public class OperateUI extends JPanel {
         updateButton.setMnemonic('U');
         updateButton.setToolTipText("Update an existing word");
         updateButton.setEnabled(false);
+        updateButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         updateButton.setName("updateButton");
         updateButton.addActionListener(e -> updateButtonActionPerformed(e));
-        add(updateButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0,
+        add(updateButton, new GridBagConstraints(1, 3, 1, 1, 0.0, 1.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 0, 5, 0), 0, 0));
 
@@ -271,9 +277,10 @@ public class OperateUI extends JPanel {
         deleteButton.setToolTipText("Delete an existing word");
         deleteButton.setMnemonic('D');
         deleteButton.setEnabled(false);
+        deleteButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         deleteButton.setName("deleteButton");
         deleteButton.addActionListener(e -> deleteButtonActionPerformed(e));
-        add(deleteButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0,
+        add(deleteButton, new GridBagConstraints(1, 4, 1, 1, 0.0, 1.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 0, 0, 0), 0, 0));
         // JFormDesigner - End of component initialization  //GEN-END:initComponents

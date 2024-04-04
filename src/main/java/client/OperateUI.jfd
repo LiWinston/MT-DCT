@@ -22,14 +22,18 @@ new FormModel {
 				"horizontalAlignment": 0
 				"editable": false
 				"focusable": false
+				"cursor": new java.awt.Cursor( 0 )
+				"background": new java.awt.Color( 207, 204, 229, 48 )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
 			add( new FormComponent( "javax.swing.JTextField" ) {
 				name: "searchBar"
 				"toolTipText": "Type your word here (Maximum 25 chars)"
 				"font": new java.awt.Font( "Microsoft YaHei UI", 0, 36 )
+				"cursor": new java.awt.Cursor( 2 )
 				addEvent( new FormEvent( "javax.swing.event.CaretListener", "caretUpdate", "searchBarCaretUpdate", true ) )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridy": 1
+				"weightx": 1.0
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "searchButton"
@@ -38,6 +42,7 @@ new FormModel {
 				"toolTipText": "Alt+s to search"
 				"font": new java.awt.Font( "Microsoft YaHei UI", 0, 36 )
 				"enabled": false
+				"cursor": &Cursor0 new java.awt.Cursor( 12 )
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "searchButtonActionPerformed", true ) )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 1
@@ -56,6 +61,8 @@ new FormModel {
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridy": 2
 				"gridheight": 3
+				"weightx": 3.0
+				"weighty": 3.0
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "addButton"
@@ -64,10 +71,12 @@ new FormModel {
 				"toolTipText": "Add a new word with meanings"
 				"mnemonic": 65
 				"enabled": false
+				"cursor": #Cursor0
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "addButtonActionPerformed", true ) )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 1
 				"gridy": 2
+				"weighty": 1.0
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "updateButton"
@@ -76,10 +85,12 @@ new FormModel {
 				"mnemonic": 85
 				"toolTipText": "Update an existing word"
 				"enabled": false
+				"cursor": #Cursor0
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "updateButtonActionPerformed", true ) )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 1
 				"gridy": 3
+				"weighty": 1.0
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "deleteButton"
@@ -88,14 +99,16 @@ new FormModel {
 				"toolTipText": "Delete an existing word"
 				"mnemonic": 68
 				"enabled": false
+				"cursor": #Cursor0
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "deleteButtonActionPerformed", true ) )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 1
 				"gridy": 4
+				"weighty": 1.0
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 785, 375 )
+			"size": new java.awt.Dimension( 710, 325 )
 		} )
 	}
 }

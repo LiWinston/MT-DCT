@@ -67,7 +67,6 @@ public class UI extends JFrame {
         //======== this ========
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("MT-DCT");
-        setResizable(false);
         setName("this");
         var contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
