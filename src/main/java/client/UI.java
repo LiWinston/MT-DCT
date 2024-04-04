@@ -5,6 +5,7 @@
 package client;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -87,6 +88,7 @@ public class UI extends JFrame {
             WelcomeMsg.setHorizontalAlignment(SwingConstants.CENTER);
             WelcomeMsg.setMinimumSize(null);
             WelcomeMsg.setFocusable(false);
+            WelcomeMsg.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             WelcomeMsg.setName("WelcomeMsg");
             Welcome.add(WelcomeMsg, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -95,6 +97,7 @@ public class UI extends JFrame {
             //---- connectButton ----
             connectButton.setText("Connect");
             connectButton.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 18));
+            connectButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             connectButton.setName("connectButton");
             connectButton.addActionListener(e -> connectButtonActionPerformed(e));
             Welcome.add(connectButton, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
