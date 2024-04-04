@@ -42,8 +42,8 @@ public class ServerDriver{
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println(STR."Server started listening on port: \{port}");
-            MCDCT_ServerWindow window = new MCDCT_ServerWindow(serverDriver);
-            window.setVisible(true);
+//            MCDCT_ServerWindow window = new MCDCT_ServerWindow(serverDriver);
+//            window.setVisible(true);
 //            serverSocket.setSoTimeout(90000);
 //            dict.add("server", serverSocket.toString());
             while (true) {
