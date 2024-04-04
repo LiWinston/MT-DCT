@@ -130,7 +130,7 @@ public class Client implements Runnable {
             try {
                 connect();
                 JOptionPane.showMessageDialog(ui,
-                        "Connection re-established",
+                        "Connection established",
                         "Success",
                         JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException e) {
