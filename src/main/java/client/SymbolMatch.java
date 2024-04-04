@@ -4,10 +4,10 @@ import java.util.Stack;
 
 public class SymbolMatch {
     public static void main(String[] args) {
-        System.out.println(checkMatchandDeleteIllegal("dfsds[][[]]]")); // 示例调用
+        System.out.println(checkParenthesesMatchandDeleteIllegal("dfsds[][[]]]")); // 示例调用
     }
 
-    public static String checkMatchandDeleteIllegal(String target) {
+    public static String checkParenthesesMatchandDeleteIllegal(String target) {
         Stack<Character> stack = new Stack<>();
         StringBuilder result = new StringBuilder();
 

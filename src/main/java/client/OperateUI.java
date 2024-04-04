@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-import static client.SymbolMatch.checkMatchandDeleteIllegal;
+import static client.SymbolMatch.checkParenthesesMatchandDeleteIllegal;
 
 public class OperateUI extends JPanel {
     private static final int MAX_WORD_LENGTH = 30;
@@ -59,7 +59,7 @@ public class OperateUI extends JPanel {
         }
         //illegal usage of character elimination
         for(String meaning : trimmedMeanings) {
-            sb.append(checkMatchandDeleteIllegal(meaning)).append(";");
+            sb.append(checkParenthesesMatchandDeleteIllegal(meaning)).append(";");
         }
 
         // Remove the last semicolon if it exists
