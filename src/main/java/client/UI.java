@@ -84,7 +84,7 @@ public class UI extends JFrame {
             //---- WelcomeMsg ----
             WelcomeMsg.setEditable(false);
             WelcomeMsg.setFont(new Font("Microsoft YaHei UI", Font.BOLD, 14));
-            WelcomeMsg.setText("Welcome to MT-DCT, Click Connect to  Start");
+            WelcomeMsg.setText("Welcome to MT-DCT, Click Connect to Start");
             WelcomeMsg.setHorizontalAlignment(SwingConstants.CENTER);
             WelcomeMsg.setMinimumSize(null);
             WelcomeMsg.setFocusable(false);

@@ -20,7 +20,7 @@ new FormModel {
 					name: "WelcomeMsg"
 					"editable": false
 					"font": new java.awt.Font( "Microsoft YaHei UI", 1, 14 )
-					"text": "Welcome to MT-DCT, Click Connect to  Start"
+					"text": "Welcome to MT-DCT, Click Connect to Start"
 					"horizontalAlignment": 0
 					"minimumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
 					"focusable": false
