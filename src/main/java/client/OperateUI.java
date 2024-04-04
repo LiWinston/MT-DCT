@@ -77,9 +77,7 @@ public class OperateUI extends JPanel {
 
         // If the format is incorrect, display a warning message
         if (!formatted) {
-            client.formatWarning(
-                    "separate meanings by \";\".\n" +
-                            "Auto correct complete, please resubmit.");
+            client.formatWarning("Reformatting complete, please resubmit.");
         }
         return formatted;
     }
