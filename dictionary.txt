@@ -1,6 +1,6 @@
-banana: a long fruit; a yellow fruit; a sweet fruit
-date: a brown fruit; a small fruit; a sweet fruit
 asada:dasd
+date: a brown fruit; a small fruit; a sweet fruit
+banana: a long fruit; a yellow fruit; a sweet fruit
 cherry: a red fruit; a small fruit; a sour fruit
 asda:sadd
 dfsdfg:sdfsd
@@ -11,6 +11,7 @@ asdasd:das
 grape: a small fruit; a purple fruit; a sweet fruit
 dsdsd:(){}[]
 pear: a green fruit; a sweet fruit; a yellow fruit
+sdfdf:However, despite its complexities, software engineering can be inc(r)edibly [rewarding] and[ impactful] when done right.";It also involves mastering various programming languages, such as Java (for its versatility), C++ ((for its performance), and Python for its ease of use).;In addition, knowledge of software design principles [like SOLID] and design patterns {such as the Observer pattern} is crucial for building scalable and maintainable systems.;"Software engineering is a fascinating field that requires{ a <deep> understanding of algorithms (especially those related to data structures) and their implementations}.
 adsad:dsds;dsdssddsdsd
 appleLLL:a fruit;a kind of fruit
 asdad:dssd
