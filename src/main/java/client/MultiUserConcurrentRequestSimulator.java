@@ -21,8 +21,8 @@ public class MultiUserConcurrentRequestSimulator {
         int port = 8600;
 
         // 设置用户数量和每个用户发出请求的次数
-        int numUsers = 300;
-        int requestsPerUser = 2000;
+        int numUsers = 1000;
+        int requestsPerUser = 200;
 
         // 创建多个用户并发发送请求
         List<CompletableFuture<Void>> futures = new ArrayList<>();
