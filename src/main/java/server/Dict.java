@@ -83,7 +83,7 @@ public class Dict {
 
         if (split.length != 2) {
             // Handle the case where the line does not have correct format
-            ServerLogger.logGeneralErr("Invalid line format: " + line);
+            ServerLogger.logGeneralErr(STR."Invalid line format: \{line}");
             return;
         }
 
@@ -106,8 +106,8 @@ public class Dict {
 
     public Response search(String word) {
         String result = innerSearch(word);
-        return result == null ? new Response(false, "Word " + word + " Not Found") :
-                new Response(true, "Word " + word + " Found, meanings: ", result);
+        return result == null ? new Response(false, STR."Word \{word} Not Found") :
+                new Response(true, STR."Word \{word} Found, meanings: ", result);
     }
 
     public Response add(String word, String meanings) {
@@ -129,8 +129,8 @@ public class Dict {
 
         // Use computeIfAbsent to atomically add the word and its meanings to the dictionary
         return dictionary.computeIfAbsent(word, k -> meaningsQueue) == meaningsQueue ?
-                new Response(true, "Word " + word + " added successfully, meanings: ", innerSearch(word)) :
-                new Response(false, "Word " + word + " already exists, meanings: ", innerSearch(word));
+                new Response(true, STR."Word \{word} added successfully, meanings: ", innerSearch(word)) :
+                new Response(false, STR."Word \{word} already exists, meanings: ", innerSearch(word));
     }
 
 
@@ -143,8 +143,8 @@ public class Dict {
             ServerLogger.logGeneralErr(STR."Error deleting word, nullpointer: \{e.getMessage()}");
             return new Response(false, STR."Error deleting word, nullpointer: \{e.getMessage()}");
         }
-        return result == null ? new Response(false, "Word " + word + " Not Found, nothing to delete") :
-                new Response(true, "Word " + word + " deleted successfully, Previous meanings: ", String.join(";", result));
+        return result == null ? new Response(false, STR."Word \{word} Not Found, nothing to delete") :
+                new Response(true, STR."Word \{word} deleted successfully, Previous meanings: ", String.join(";", result));
     }
 
     public Response update(String word, String meanings) {
@@ -178,7 +178,7 @@ public class Dict {
                 return new Response(true, "No new meaning to update, everything remains", resMeanings);
             else return new Response(true, STR."Word \{word} updated successfully, New meanings: ", resMeanings);
         } else {
-            return new Response(false, "Word " + word + " Not Found, update failed");
+            return new Response(false, STR."Word \{word} Not Found, update failed");
         }
     }
 
@@ -187,11 +187,11 @@ public class Dict {
     public void saveToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             for (Map.Entry<String, PriorityQueue<String>> entry : dictionary.entrySet()) {
-                writer.write(entry.getKey() + ":" + String.join(";", entry.getValue()));
+                writer.write(STR."\{entry.getKey()}:\{String.join(";", entry.getValue())}");
                 writer.newLine();
             }
         } catch (IOException e) {
-            ServerLogger.logGeneralErr("Error saving to file: " + e.getMessage());
+            ServerLogger.logGeneralErr(STR."Error saving to file: \{e.getMessage()}");
         }
     }
 

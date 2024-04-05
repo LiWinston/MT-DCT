@@ -47,7 +47,7 @@ public class Client implements Runnable {
     protected void connect() throws IllegalArgumentException, IOException {
         socket = new Socket(address, port);
         if (socket.isConnected()) {
-            System.out.println("Connected to server: " + address + ":" + port);
+            System.out.println(STR."Connected to server: \{address}:\{port}");
         }
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
@@ -90,8 +90,7 @@ public class Client implements Runnable {
 
             } catch (IOException e) {
                 int choice = JOptionPane.showConfirmDialog(ui,
-                        e.getMessage() +
-                                "Connection error, press yes to retry, no to exit",
+                        STR."\{e.getMessage()}Connection error, press yes to retry, no to exit",
                         "Fail",
                         JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
@@ -132,7 +131,7 @@ public class Client implements Runnable {
     //非请求积压式重连 Non-request backlog reconnection
     public void connectionError(String msg) {
         int choice = JOptionPane.showConfirmDialog(ui,
-                "Connection error: " + msg + ", press yes to retry, no to exit",
+                STR."Connection error: \{msg}, press yes to retry, no to exit",
                 "Error",
                 JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
@@ -153,7 +152,7 @@ public class Client implements Runnable {
     //请求积压 重连再发送 Request backlog reconnection
     public CompletableFuture<String> connectionError(String msg, String s) {
         int choice = JOptionPane.showConfirmDialog(ui,
-                "Connection error: " + msg + ", press yes to retry, no to exit",
+                STR."Connection error: \{msg}, press yes to retry, no to exit",
                 "Error",
                 JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {

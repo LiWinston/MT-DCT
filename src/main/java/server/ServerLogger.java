@@ -14,17 +14,17 @@ public class ServerLogger {
         System.exit(1);
     }
 
-    public static void connectionError(Component parent, String msg) {
+    public static void connectionError(Component parent, String msg, String connectionErrorType) {
         JOptionPane.showMessageDialog(parent,
-                "Connection error: " + msg,
-                "Error",
+                STR."Connection error: \{msg}",
+                STR."\{connectionErrorType }Error",
                 JOptionPane.ERROR_MESSAGE);
     }
 
-    public static void IOError(Component parent, String msg) {
+    public static void IOError(Component parent, String msg, String IOErrorType) {
         JOptionPane.showMessageDialog(parent,
-                "IO error: " + msg,
-                "Error",
+                STR."IO error: \{msg}",
+                STR."\{IOErrorType}Error",
                 JOptionPane.ERROR_MESSAGE);
     }
 

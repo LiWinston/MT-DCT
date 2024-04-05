@@ -30,7 +30,7 @@ public class ServerThread implements Runnable {
                 while (true) {
 //                System.out.println("Waiting for request...");
                     String req = b_iStream.readLine();
-                    System.out.println("Request received: " + req);
+                    System.out.println(STR."Request received: \{req}");
                     // Decode the request
                     Request.Action action = localReqHdl.getAction(req);
 
@@ -46,7 +46,7 @@ public class ServerThread implements Runnable {
 //                                        out.writeChars (res.getMessage());
                                         dict.saveToFile();
                                         out.writeUTF(res.toResponse() + "\n");
-                                        System.out.println("Response sent: " + res.toResponse());
+                                        System.out.println(STR."Response sent: \{res.toResponse()}");
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
                                     }
@@ -58,7 +58,7 @@ public class ServerThread implements Runnable {
                                     dict.saveToFile();
                                     try {
                                         out.writeUTF(res.toResponse() + "\n");
-                                        System.out.println("Response sent: " + res.toResponse());
+                                        System.out.println(STR."Response sent: \{res.toResponse()}");
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
                                     }
@@ -71,7 +71,7 @@ public class ServerThread implements Runnable {
                                     dict.saveToFile();
                                     try {
                                         out.writeUTF(res.toResponse() + "\n");
-                                        System.out.println("Response sent: " + res.toResponse());
+                                        System.out.println(STR."Response sent: \{res.toResponse()}");
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
                                     }
@@ -82,7 +82,7 @@ public class ServerThread implements Runnable {
                                     Response res = dict.search(word);
                                     try {
                                         out.writeUTF(res.toResponse() + "\n");
-                                        System.out.println("Response sent: " + res.toResponse());
+                                        System.out.println(STR."Response sent: \{res.toResponse()}");
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
                                     }
