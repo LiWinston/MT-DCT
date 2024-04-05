@@ -6,6 +6,9 @@ import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static java.lang.System.exit;
 
@@ -18,6 +21,7 @@ public class Client implements Runnable {
     private UI ui;
     private DataInputStream in;
     private DataOutputStream out;
+    private final java.util.concurrent.ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
     public static void main(String[] args) {
         if (args.length != 2) {
@@ -65,46 +69,51 @@ public class Client implements Runnable {
     }
 
 
-    protected CompletableFuture<String> sendRequest(String s) {
-        CompletableFuture<String> future = new CompletableFuture<>();
-        try {
-            out.writeBytes(STR."\{s}\n");
-//            out.flush();
-            // 异步接收服务器的响应
-            CompletableFuture.runAsync(() -> {
-                try {
-//                    String response = b_iStream.readLine();
-                    String response = in.readUTF();
-                    future.complete(response);
-//                    future.complete(Response.getStatusString(response) + ": " + Response.getMessageString(response) + " " + Response.getMeaningsString(response));
-                } catch (IOException e) {
-                    future.completeExceptionally(e);
-                }
-            });
-        } catch (IOException e) {
-            int choice = JOptionPane.showConfirmDialog(ui,
-                    e.getMessage()+
-                            "Connection error, press yes to retry, no to exit",
-                    "Fail",
-                    JOptionPane.YES_NO_OPTION);
-            if (choice == JOptionPane.YES_OPTION) {
-                try {
-//                    disconnect();
-                    connect();
-                    JOptionPane.showMessageDialog(ui,
-                            "Connection re-established",
-                            "Success",
-                            JOptionPane.INFORMATION_MESSAGE);
-                    return sendRequest(s);
-                } catch (IOException ioException) {
-                    return connectionError(ioException.getMessage(),s);
-                }
-            } else {
-                exit(1);
-            }
+    protected CompletableFuture<String> sendRequest(String s) throws ExecutionException, InterruptedException {
 
-        }
-        return future;
+        Future<CompletableFuture<String>> ftft = executor.submit(() -> {
+            CompletableFuture<String> future = new CompletableFuture<>();
+            try {
+                out.writeBytes(STR."\{s}\n");
+//            out.flush();
+                // 异步接收服务器的响应
+                CompletableFuture.runAsync(() -> {
+                    try {
+//                    String response = b_iStream.readLine();
+                        String response = in.readUTF();
+                        future.complete(response);
+//                    future.complete(Response.getStatusString(response) + ": " + Response.getMessageString(response) + " " + Response.getMeaningsString(response));
+                    } catch (IOException e) {
+                        future.completeExceptionally(e);
+                    }
+                });
+
+            } catch (IOException e) {
+                int choice = JOptionPane.showConfirmDialog(ui,
+                        e.getMessage() +
+                                "Connection error, press yes to retry, no to exit",
+                        "Fail",
+                        JOptionPane.YES_NO_OPTION);
+                if (choice == JOptionPane.YES_OPTION) {
+                    try {
+//                    disconnect();
+                        connect();
+                        JOptionPane.showMessageDialog(ui,
+                                "Connection re-established",
+                                "Success",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        return sendRequest(s);
+                    } catch (IOException ioException) {
+                        return connectionError(ioException.getMessage(), s);
+                    }
+                } else {
+                    exit(1);
+                }
+
+            }
+            return future;
+        });
+        return ftft.get();
     }
 
     @Override
@@ -157,6 +166,10 @@ public class Client implements Runnable {
                 return sendRequest(s);
             } catch (IOException e) {
                 connectionError(e.getMessage(),s);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         } else {
             exit(1);

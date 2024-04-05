@@ -14,12 +14,14 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static client.SymbolMatch.checkParenthesesMatchandDeleteIllegal;
 
 public class OperateUI extends JPanel {
     private static final int MAX_WORD_LENGTH = 30;
 
+    boolean enalbeParenthesesMatchCheck = true;
     protected Client client;
     public OperateUI(Client client) {
         this.client = client;
@@ -59,7 +61,11 @@ public class OperateUI extends JPanel {
         }
         //illegal usage of character elimination
         for(String meaning : trimmedMeanings) {
-            sb.append(checkParenthesesMatchandDeleteIllegal(meaning)).append(";");
+            if(enalbeParenthesesMatchCheck){
+                sb.append(checkParenthesesMatchandDeleteIllegal(meaning)).append(";");
+            }else {
+                sb.append(meaning).append(";");
+            }
         }
 
         // Remove the last semicolon if it exists
@@ -109,7 +115,14 @@ public class OperateUI extends JPanel {
     private void searchButtonActionPerformed(ActionEvent e) {
         if (wordFormatter()) {
             String req = client.localReqHdl.createSearchRequest(searchBar.getText());
-            CompletableFuture<String> res = client.sendRequest(req);
+            CompletableFuture<String> res = null;
+            try {
+                res = client.sendRequest(req);
+            } catch (ExecutionException ex) {
+                throw new RuntimeException(ex);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
             parseResponse(Objects.requireNonNull(res.join()), req);
             meaningsText.setText(Response.getMeaningsString(res.join()));
         }
@@ -119,7 +132,14 @@ public class OperateUI extends JPanel {
     private void deleteButtonActionPerformed(ActionEvent e) {
         if (wordFormatter()) {
             String req = client.localReqHdl.createDeleteRequest(searchBar.getText());
-            CompletableFuture<String> res = client.sendRequest(req);
+            CompletableFuture<String> res = null;
+            try {
+                res = client.sendRequest(req);
+            } catch (ExecutionException ex) {
+                throw new RuntimeException(ex);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
             parseResponse(Objects.requireNonNull(res.join()), req);
             meaningsText.setText("");
         }
@@ -131,7 +151,14 @@ public class OperateUI extends JPanel {
             String req = client.localReqHdl.createAddRequest(
                     searchBar.getText(), meaningsText.getText().split("\n")
             );
-            CompletableFuture<String> res = client.sendRequest(req);
+            CompletableFuture<String> res = null;
+            try {
+                res = client.sendRequest(req);
+            } catch (ExecutionException ex) {
+                throw new RuntimeException(ex);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
             parseResponse(Objects.requireNonNull(res.join()), req);
             // seems not necessary after adding since user may want to see the present meanings and conduct update then
 //            meaningsText.setText("");
@@ -144,7 +171,14 @@ public class OperateUI extends JPanel {
             String req = client.localReqHdl.createUpdateRequest(
                     searchBar.getText(), meaningsText.getText().split("\n")
             );
-            CompletableFuture<String> res = client.sendRequest(req);
+            CompletableFuture<String> res = null;
+            try {
+                res = client.sendRequest(req);
+            } catch (ExecutionException ex) {
+                throw new RuntimeException(ex);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
             parseResponse(Objects.requireNonNull(res.join()), req);
             if (Objects.equals(Response.getStatusString(res.join()), "SUCCESS")) {
                 meaningsText.setText(Response.getMeaningsString(res.join()));
@@ -174,6 +208,7 @@ public class OperateUI extends JPanel {
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         searchTitle = new JTextField();
+        checkBox1 = new JCheckBox();
         searchBar = new JTextField();
         searchButton = new JButton();
         meaningsSpace = new JScrollPane();
@@ -202,6 +237,13 @@ public class OperateUI extends JPanel {
         add(searchTitle, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 0, 5, 5), 0, 0));
+
+        //---- checkBox1 ----
+        checkBox1.setText("text");
+        checkBox1.setName("checkBox1");
+        add(checkBox1, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            new Insets(0, 0, 5, 0), 0, 0));
 
         //---- searchBar ----
         searchBar.setToolTipText("Type your word here (Maximum 25 chars)");
@@ -286,6 +328,7 @@ public class OperateUI extends JPanel {
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private JTextField searchTitle;
+    private JCheckBox checkBox1;
     private JTextField searchBar;
     private JButton searchButton;
     private JScrollPane meaningsSpace;
