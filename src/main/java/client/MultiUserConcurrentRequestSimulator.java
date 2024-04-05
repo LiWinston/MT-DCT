@@ -42,7 +42,7 @@ public class MultiUserConcurrentRequestSimulator {
                         Request reqHdl = new Request();
                         String rs = reqHdl.createAddRequest(RandomString(), RandomStringArray());
                         CompletableFuture<String> rer = client.sendRequest(rs);
-                        System.out.println("User " + Thread.currentThread().getName() + " - Response: " + (rer.join()));
+                        System.out.println("User " + Thread.currentThread().getName() + " - Response:\n " + (rer.join()));
                     }
 
                     // 断开连接
