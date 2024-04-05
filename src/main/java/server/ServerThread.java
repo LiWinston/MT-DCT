@@ -44,6 +44,7 @@ public class ServerThread implements Runnable {
                                     try {
                                         Response res = dict.add(word, meanings);
 //                                        out.writeChars (res.getMessage());
+                                        dict.saveToFile();
                                         out.writeUTF(res.toResponse() + "\n");
                                         System.out.println("Response sent: " + res.toResponse());
                                     } catch (IOException e) {
@@ -54,6 +55,7 @@ public class ServerThread implements Runnable {
                             case DELETE:
                                 executor.submit(() -> {
                                     Response res = dict.delete(word);
+                                    dict.saveToFile();
                                     try {
                                         out.writeUTF(res.toResponse() + "\n");
                                         System.out.println("Response sent: " + res.toResponse());
@@ -66,6 +68,7 @@ public class ServerThread implements Runnable {
                                 executor.submit(() -> {
                                     String meanings = localReqHdl.getMeanings(req);
                                     Response res = dict.update(word, meanings);
+                                    dict.saveToFile();
                                     try {
                                         out.writeUTF(res.toResponse() + "\n");
                                         System.out.println("Response sent: " + res.toResponse());
@@ -89,7 +92,7 @@ public class ServerThread implements Runnable {
                                 out.writeUTF("Invalid request\n");
                         }
                     }
-                    dict.saveToFile();
+//                    dict.saveToFile();
                 }
             }
         } catch (UTFDataFormatException ue){
