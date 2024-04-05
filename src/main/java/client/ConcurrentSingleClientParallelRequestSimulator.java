@@ -1,6 +1,7 @@
 package client;
 
 import prtc.Request;
+import prtc.Response;
 
 import java.io.IOException;
 import java.security.SecureRandom;
@@ -24,18 +25,21 @@ public class ConcurrentSingleClientParallelRequestSimulator {
             return;
         }
 
+        String req = client.localReqHdl.createAddRequest(
+                RandomString(), RandomStringArray());
+        CompletableFuture<String> res = client.sendRequest(req);
+        System.out.println("Response: " + res.join());
+
         for (int i = 0; i < 10; i++) {
-            Thread.ofPlatform().start(() -> {
+            Thread.ofVirtual().start(() -> {
                 Request reqHdl = new Request();
-                String req = reqHdl.createAddRequest(RandomString(), RandomStringArray());
-                CompletableFuture<String> res = client.sendRequest(req);
-                System.out.println("Response: " + res.join());
+//                String req = reqHdl.createAddRequest(RandomString(), RandomStringArray());
+                String rs = reqHdl.createAddRequest(RandomString(), RandomStringArray());
+                CompletableFuture<String> rer = client.sendRequest(rs);
+                System.out.println(STR."Response: \{Response.getMeaningsString(rer.join())}");
             });
         }
-//        String req = client.localReqHdl.createAddRequest(
-//                RandomString(), RandomStringArray());
-//        CompletableFuture<String> res = client.sendRequest(req);
-//        System.out.println("Response: " + res.join());
+
 
 
         // 断开连接

@@ -5,20 +5,21 @@ import prtc.Request;
 import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 
 import static java.lang.System.exit;
 
 public class Client implements Runnable {
+    private final java.util.concurrent.ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
     BufferedReader b_iStream;
     String address;
     int port;
     Request localReqHdl = new Request();
     Socket socket;
     private UI ui;
-    private DataInputStream in;
-    private DataOutputStream out;
-    private final java.util.concurrent.ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+    private BufferedInputStream in;
+    private BufferedOutputStream out;
 
     public static void main(String[] args) {
         if (args.length != 2) {
@@ -46,8 +47,8 @@ public class Client implements Runnable {
         if (socket.isConnected()) {
             System.out.println(STR."Connected to server: \{address}:\{port}");
         }
-        in = new DataInputStream(socket.getInputStream());
-        out = new DataOutputStream(socket.getOutputStream());
+        in = new BufferedInputStream(socket.getInputStream());
+        out = new BufferedOutputStream(socket.getOutputStream());
         b_iStream = new BufferedReader(new InputStreamReader(in));
     }
 
@@ -68,7 +69,7 @@ public class Client implements Runnable {
     protected CompletableFuture<String> sendRequest(String s) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                out.writeBytes(s + "\n");
+                out.write((s + "\n").getBytes());
                 out.flush();
                 System.out.println(STR."Request sent: \{s}");
                 return true;
@@ -89,7 +90,9 @@ public class Client implements Runnable {
             }
         }, executor).thenApplyAsync(success -> {
             try {
-                return in.readUTF();
+                String res = b_iStream.readLine();
+//                System.out.println(STR."Response received: \{res}");
+                return res;
             } catch (IOException e) {
                 System.out.println(STR."Connection error: \{e.getMessage()}");
             }
@@ -150,7 +153,7 @@ public class Client implements Runnable {
                         JOptionPane.INFORMATION_MESSAGE);
                 return null;
             } catch (IOException e) {
-                return connectionError(e.getMessage(),s);
+                return connectionError(e.getMessage(), s);
             }
         } else {
             exit(1);
@@ -172,6 +175,7 @@ public class Client implements Runnable {
                 "Fail",
                 JOptionPane.ERROR_MESSAGE);
     }
+
     public void FailDialog(String msg, String title) {
         JOptionPane.showMessageDialog(ui,
                 msg,

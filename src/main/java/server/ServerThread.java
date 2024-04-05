@@ -22,9 +22,9 @@ public class ServerThread implements Runnable {
 
     @Override
     public void run() {
-        try (DataInputStream in = new DataInputStream(socket.getInputStream());
+        try (BufferedInputStream  in = new BufferedInputStream(socket.getInputStream());
              BufferedReader b_iStream = new BufferedReader(new InputStreamReader(in));
-             DataOutputStream out = new DataOutputStream(socket.getOutputStream())) {
+             BufferedOutputStream  out = new BufferedOutputStream(socket.getOutputStream())) {
 
             try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
                 while (true) {
@@ -45,7 +45,8 @@ public class ServerThread implements Runnable {
                                         Response res = dict.add(word, meanings);
 //                                        out.writeChars (res.getMessage());
                                         dict.saveToFile();
-                                        out.writeUTF(res.toResponse() + "\n");
+                                        out.write((res.toResponse() + "\n").getBytes());
+                                        out.flush();
                                         System.out.println(STR."Response sent: \{res.toResponse()}");
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
@@ -57,7 +58,8 @@ public class ServerThread implements Runnable {
                                     Response res = dict.delete(word);
                                     dict.saveToFile();
                                     try {
-                                        out.writeUTF(res.toResponse() + "\n");
+                                        out.write((res.toResponse() + "\n").getBytes());
+                                        out.flush();
                                         System.out.println(STR."Response sent: \{res.toResponse()}");
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
@@ -70,7 +72,8 @@ public class ServerThread implements Runnable {
                                     Response res = dict.update(word, meanings);
                                     dict.saveToFile();
                                     try {
-                                        out.writeUTF(res.toResponse() + "\n");
+                                        out.write((res.toResponse() + "\n").getBytes());
+                                        out.flush();
                                         System.out.println(STR."Response sent: \{res.toResponse()}");
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
@@ -81,7 +84,8 @@ public class ServerThread implements Runnable {
                                 executor.submit(() -> {
                                     Response res = dict.search(word);
                                     try {
-                                        out.writeUTF(res.toResponse() + "\n");
+                                        out.write((res.toResponse() + "\n").getBytes());
+                                        out.flush();
                                         System.out.println(STR."Response sent: \{res.toResponse()}");
                                     } catch (IOException e) {
                                         throw new RuntimeException(e);
@@ -89,7 +93,8 @@ public class ServerThread implements Runnable {
                                 });
                                 break;
                             default:
-                                out.writeUTF("Invalid request\n");
+                                out.write("Invalid request\n".getBytes());
+                                out.flush();
                         }
                     }
 //                    dict.saveToFile();
