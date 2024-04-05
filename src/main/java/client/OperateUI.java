@@ -117,7 +117,11 @@ public class OperateUI extends JPanel {
             String req = client.localReqHdl.createSearchRequest(searchBar.getText());
             CompletableFuture<String> res = null;
             res = client.sendRequest(req);
-            parseResponse(Objects.requireNonNull(res.join()), req);
+            try {
+                parseResponse(Objects.requireNonNull(res.get()), req);
+            } catch (InterruptedException | ExecutionException ex) {
+                throw new RuntimeException(ex);
+            }
             meaningsText.setText(Response.getMeaningsString(res.join()));
         }
     }
@@ -163,20 +167,19 @@ public class OperateUI extends JPanel {
     }
 
     //Invoke with response and request, where request is only used for indicate the action within Failure Dialogs.
-    private void parseResponse(String response,String request) {
+    public void parseResponse(String response,String request) {
         System.out.println(STR."received response: \{response}");
-        switch (Objects.requireNonNull(Response.getStatusString(response))) {
-//            case "Error":
-//                client.connectionError(reply[1]);
-//                break;
+        String res = (Response.getStatusString(response));
+        switch (res) {
             case "FAIL":
                 client.FailDialog(Response.getMessageString(response) + Response.getMeaningsString(response), STR."\{String.valueOf(client.localReqHdl.getAction(request))} Failure");
                 break;
             case "SUCCESS":
                 client.SuccessDialog(Response.getMessageString(response) + Response.getMeaningsString(response), STR."\{String.valueOf(client.localReqHdl.getAction(request))} Success");
                 break;
+            case "NONE":
             default:
-                client.FailDialog("Broken response");
+                System.err.println(STR."Invalid response");
                 break;
         }
     }

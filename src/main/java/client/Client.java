@@ -49,7 +49,6 @@ public class Client implements Runnable {
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
         b_iStream = new BufferedReader(new InputStreamReader(in));
-
     }
 
     protected void disconnect() {
@@ -69,28 +68,19 @@ public class Client implements Runnable {
     protected CompletableFuture<String> sendRequest(String s) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                out.writeBytes(STR + s + "\n");
+                out.writeBytes(s + "\n");
+                out.flush();
+                System.out.println(STR."Request sent: \{s}");
                 return true;
             } catch (IOException e) {
                 System.out.println("Kazhele");
                 SwingUtilities.invokeLater(() -> {
                     int choice = JOptionPane.showConfirmDialog(ui,
-                            " Connection error, press yes to retry, no to exit",
-                            "Fail",
+                            " Socket not available, Try again?",
+                            "Retry",
                             JOptionPane.YES_NO_OPTION);
                     if (choice == JOptionPane.YES_OPTION) {
-                        try {
-                            connect();
-                            System.out.println("Kazhele 1");
-                            JOptionPane.showMessageDialog(ui,
-                                    "Connection re-established",
-                                    "Success",
-                                    JOptionPane.INFORMATION_MESSAGE);
-                            sendRequest(s);
-                        } catch (IOException ioException) {
-                            System.out.println("Kazhele 2");
-                            connectionError(ioException.getMessage(), s);
-                        }
+                        connectionError("Remote server down.", s);
                     } else {
                         exit(1);
                     }
@@ -99,16 +89,14 @@ public class Client implements Runnable {
             }
         }, executor).thenApplyAsync(success -> {
             try {
-                String response = in.readUTF();
-                return response;
+                return in.readUTF();
             } catch (IOException e) {
-                throw new CompletionException(e);
+                System.out.println(STR."Connection error: \{e.getMessage()}");
             }
+            return "";
         }, executor).exceptionally(e -> {
-            SwingUtilities.invokeLater(() -> {
-                connectionError(e.getMessage(), s);
-            });
-            return null;
+            System.out.println(STR."Connection error: \{e.getMessage()}");
+            return "";
         });
     }
 
@@ -160,9 +148,9 @@ public class Client implements Runnable {
                         "Connection re-established",
                         "Success",
                         JOptionPane.INFORMATION_MESSAGE);
-                return sendRequest(s);
+                return null;
             } catch (IOException e) {
-                connectionError(e.getMessage(),s);
+                return connectionError(e.getMessage(),s);
             }
         } else {
             exit(1);
