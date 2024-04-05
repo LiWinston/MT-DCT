@@ -5,32 +5,75 @@ import prtc.Response;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class ServerThread implements Runnable {
     //General listener monitoring ALL clients, employing single virtual thread to handle each request
     private final Dict dict;
     private final Socket socket;
     BufferedReader b_iStream;
+    Thread.Builder.OfVirtual reqReceiver;
+    BlockingQueue<String> reqQueue = new LinkedBlockingQueue<>();
 
     Request localReqHdl = new Request();
 
     public ServerThread(Socket clientSocket, Dict dict) {
         this.dict = dict;
         this.socket = clientSocket;
+        reqReceiver = Thread.ofVirtual();;
+        reqReceiver.start(() -> {
+            try(DataInputStream in = new DataInputStream(socket.getInputStream());
+                BufferedReader b_iStream = new BufferedReader(new InputStreamReader(in));){
+                this.b_iStream = b_iStream;
+                while (true){
+                    if(socket.isClosed()){
+                        System.out.println(STR."Err: Connection to Client \{socket.getRemoteSocketAddress()} closed. Closing connection thread");
+                        synchronized (reqReceiver){
+                            try {
+                                reqReceiver.wait();
+                            } catch (InterruptedException e) {
+                                System.out.println(STR."Err: Unable to wait for connection thread to close: \{e.getMessage()}");
+                            }
+                        }
+                    }
+                    String req = null;
+                    try {
+                        req = b_iStream.readLine();
+                        reqQueue.put(req);
+                    } catch (IOException e) {
+                        System.out.println(STR."Err: Lost connection to Client \{socket.getRemoteSocketAddress()} Closing connection thread");
+                        try {
+                            socket.close();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                            System.out.println("Err: Unable to close the connection");
+                        }
+                        Thread.currentThread().interrupt();
+                    } catch (InterruptedException e) {//Queue put exception
+                        System.out.println(STR."Err: Unable to put request in queue: \{e.getMessage()}");
+                    }
+
+                    System.out.println("Request received: " + req);
+                }
+            }catch (IOException e){
+                System.out.println(STR."Err: Unable to get input stream from client socket: \{e.getMessage()}");
+            }catch (NullPointerException e){
+                System.out.println(STR."Err: Unable to create input stream from client socket: \{e.getMessage()}");
+            }
+        });
     }
 
     @Override
     public void run() {
-        try (DataInputStream in = new DataInputStream(socket.getInputStream());
-             BufferedReader b_iStream = new BufferedReader(new InputStreamReader(in));
-             DataOutputStream out = new DataOutputStream(socket.getOutputStream())) {
+        try (DataOutputStream out = new DataOutputStream(socket.getOutputStream())) {
 
             try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
                 while (true) {
 //                System.out.println("Waiting for request...");
-                    String req = b_iStream.readLine();
-                    System.out.println("Request received: " + req);
+                    String req = reqQueue.take();
+                    System.out.println(STR."Request Proccessing: \{req}");
                     // Decode the request
                     Request.Action action = localReqHdl.getAction(req);
 
@@ -91,11 +134,13 @@ public class ServerThread implements Runnable {
                     }
                     dict.saveToFile();
                 }
+            } catch (InterruptedException e) {//Queue take exception
+                System.out.println(STR."Err: Unable to take request from queue: \{e.getMessage()}");
+                throw new RuntimeException(e);
             }
-        } catch (UTFDataFormatException ue){
+        } catch (UTFDataFormatException _){
 
         } catch(IOException e) {
-//            throw new RuntimeException(e);
             System.out.println(STR."Err: Lost connection to Client \{socket.getRemoteSocketAddress()} Closing connection thread");
             try {
                 socket.close();
@@ -103,6 +148,12 @@ public class ServerThread implements Runnable {
                 ex.printStackTrace();
                 System.out.println("Err: Unable to close the connection");
             }
+        }
+    }
+
+    public void notifyReqReceiver(){
+        synchronized (reqReceiver){
+            reqReceiver.notify();
         }
     }
 }
