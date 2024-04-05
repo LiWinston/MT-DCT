@@ -116,13 +116,7 @@ public class OperateUI extends JPanel {
         if (wordFormatter()) {
             String req = client.localReqHdl.createSearchRequest(searchBar.getText());
             CompletableFuture<String> res = null;
-            try {
-                res = client.sendRequest(req);
-            } catch (ExecutionException ex) {
-                throw new RuntimeException(ex);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
+            res = client.sendRequest(req);
             parseResponse(Objects.requireNonNull(res.join()), req);
             meaningsText.setText(Response.getMeaningsString(res.join()));
         }
@@ -133,13 +127,7 @@ public class OperateUI extends JPanel {
         if (wordFormatter()) {
             String req = client.localReqHdl.createDeleteRequest(searchBar.getText());
             CompletableFuture<String> res = null;
-            try {
-                res = client.sendRequest(req);
-            } catch (ExecutionException ex) {
-                throw new RuntimeException(ex);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
+            res = client.sendRequest(req);
             parseResponse(Objects.requireNonNull(res.join()), req);
             meaningsText.setText("");
         }
@@ -152,13 +140,7 @@ public class OperateUI extends JPanel {
                     searchBar.getText(), meaningsText.getText().split("\n")
             );
             CompletableFuture<String> res = null;
-            try {
-                res = client.sendRequest(req);
-            } catch (ExecutionException ex) {
-                throw new RuntimeException(ex);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
+            res = client.sendRequest(req);
             parseResponse(Objects.requireNonNull(res.join()), req);
             // seems not necessary after adding since user may want to see the present meanings and conduct update then
 //            meaningsText.setText("");
@@ -172,13 +154,7 @@ public class OperateUI extends JPanel {
                     searchBar.getText(), meaningsText.getText().split("\n")
             );
             CompletableFuture<String> res = null;
-            try {
-                res = client.sendRequest(req);
-            } catch (ExecutionException ex) {
-                throw new RuntimeException(ex);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
+            res = client.sendRequest(req);
             parseResponse(Objects.requireNonNull(res.join()), req);
             if (Objects.equals(Response.getStatusString(res.join()), "SUCCESS")) {
                 meaningsText.setText(Response.getMeaningsString(res.join()));

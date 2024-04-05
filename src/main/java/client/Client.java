@@ -69,9 +69,8 @@ public class Client implements Runnable {
     }
 
 
-    protected CompletableFuture<String> sendRequest(String s) throws ExecutionException, InterruptedException {
+    protected CompletableFuture<String> sendRequest(String s){
 
-        Future<CompletableFuture<String>> ftft = executor.submit(() -> {
             CompletableFuture<String> future = new CompletableFuture<>();
             try {
                 out.writeBytes(STR."\{s}\n");
@@ -111,8 +110,6 @@ public class Client implements Runnable {
 
             }
             return future;
-        });
-        return ftft.get();
     }
 
     @Override
@@ -165,10 +162,6 @@ public class Client implements Runnable {
                 return sendRequest(s);
             } catch (IOException e) {
                 connectionError(e.getMessage(),s);
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
             }
         } else {
             exit(1);
