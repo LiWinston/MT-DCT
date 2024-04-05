@@ -185,14 +185,14 @@ public class Dict {
 
     // Method to save dictionary content to file
     public void saveToFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            for (Map.Entry<String, PriorityQueue<String>> entry : dictionary.entrySet()) {
-                writer.write(STR."\{entry.getKey()}:\{String.join(";", entry.getValue())}");
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            ServerLogger.logGeneralErr(STR."Error saving to file: \{e.getMessage()}");
-        }
+//        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+//            for (Map.Entry<String, PriorityQueue<String>> entry : dictionary.entrySet()) {
+//                writer.write(STR."\{entry.getKey()}:\{String.join(";", entry.getValue())}");
+//                writer.newLine();
+//            }
+//        } catch (IOException e) {
+//            ServerLogger.logGeneralErr(STR."Error saving to file: \{e.getMessage()}");
+//        }
     }
 
     void printDictionaryInfo() {
