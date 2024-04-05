@@ -75,17 +75,9 @@ public class Client implements Runnable {
                 return true;
             } catch (IOException e) {
                 System.out.println("Kazhele");
-                SwingUtilities.invokeLater(() -> {
-                    int choice = JOptionPane.showConfirmDialog(ui,
-                            " Socket not available, Try again?",
-                            "Retry",
-                            JOptionPane.YES_NO_OPTION);
-                    if (choice == JOptionPane.YES_OPTION) {
-                        connectionError("Remote server down.", s);
-                    } else {
-                        exit(1);
-                    }
-                });
+//                SwingUtilities.invokeLater(() -> connectionError(e.getMessage()));
+                SwingUtilities.invokeLater(() -> {connectionError(e.getMessage(),s);});
+                
                 return false;
             }
         }, executor).thenApplyAsync(success -> {
