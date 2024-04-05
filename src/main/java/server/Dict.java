@@ -100,7 +100,6 @@ public class Dict {
 
 
     private String innerSearch(String word) {
-//        System.out.println("Now searching: " + word);
         PriorityQueue<String> q = dictionary.get(word);
         return q == null ? null : String.join(";", q);
     }
@@ -136,9 +135,14 @@ public class Dict {
 
 
     public Response delete(String word) {
-//        System.out.println("Now deleting: " + word);
         // If the word doesn't exist, return false; otherwise delete it from the dictionary, return true
-        PriorityQueue<String> result = dictionary.remove(word);
+        PriorityQueue<String> result;
+        try{
+            result = dictionary.remove(word);
+        }catch (NullPointerException e){
+            ServerLogger.logGeneralErr(STR."Error deleting word, nullpointer: \{e.getMessage()}");
+            return new Response(false, STR."Error deleting word, nullpointer: \{e.getMessage()}");
+        }
         return result == null ? new Response(false, "Word " + word + " Not Found, nothing to delete") :
                 new Response(true, "Word " + word + " deleted successfully, Previous meanings: ", String.join(";", result));
     }
