@@ -74,10 +74,9 @@ public class Client implements Runnable {
                 System.out.println(STR."Request sent: \{s}");
                 return true;
             } catch (IOException e) {
-                System.out.println("Kazhele");
 //                SwingUtilities.invokeLater(() -> connectionError(e.getMessage()));
                 SwingUtilities.invokeLater(() -> {connectionError(e.getMessage(),s);});
-                
+
                 return false;
             }
         }, executor).thenApplyAsync(success -> {
@@ -112,7 +111,7 @@ public class Client implements Runnable {
     //非请求积压式重连 Non-request backlog reconnection
     public void connectionError(String msg) {
         int choice = JOptionPane.showConfirmDialog(ui,
-                STR."Connection error: \{msg}, press yes to retry, no to exit",
+                STR."Connection error: \{msg}. Press Yes to retry, No to exit",
                 "Error",
                 JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
@@ -133,7 +132,7 @@ public class Client implements Runnable {
     //请求积压 重连再发送 Request backlog reconnection
     public CompletableFuture<String> connectionError(String msg, String s) {
         int choice = JOptionPane.showConfirmDialog(ui,
-                STR."Connection error: \{msg}, press yes to retry, no to exit",
+                STR."Connection error: \{msg}, press Yes to retry, No to exit",
                 "Error",
                 JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
