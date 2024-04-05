@@ -23,8 +23,7 @@ public class Response {
             JSONObject jsonObject = new JSONObject(res);
             return jsonObject.getString("status");
         } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
+            return "NONE";
         }
     }
 

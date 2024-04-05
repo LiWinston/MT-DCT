@@ -6,22 +6,20 @@ import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import static java.lang.System.exit;
 
 public class Client implements Runnable {
+    private final java.util.concurrent.ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
     BufferedReader b_iStream;
     String address;
     int port;
     Request localReqHdl = new Request();
     Socket socket;
     private UI ui;
-    private DataInputStream in;
-    private DataOutputStream out;
-    private final java.util.concurrent.ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+    private BufferedInputStream in;
+    private BufferedOutputStream out;
 
     public static void main(String[] args) {
         if (args.length != 2) {
@@ -49,10 +47,9 @@ public class Client implements Runnable {
         if (socket.isConnected()) {
             System.out.println(STR."Connected to server: \{address}:\{port}");
         }
-        in = new DataInputStream(socket.getInputStream());
-        out = new DataOutputStream(socket.getOutputStream());
+        in = new BufferedInputStream(socket.getInputStream());
+        out = new BufferedOutputStream(socket.getOutputStream());
         b_iStream = new BufferedReader(new InputStreamReader(in));
-
     }
 
     protected void disconnect() {
@@ -69,48 +66,34 @@ public class Client implements Runnable {
     }
 
 
-    protected CompletableFuture<String> sendRequest(String s){
-
-            CompletableFuture<String> future = new CompletableFuture<>();
+    protected synchronized CompletableFuture<String> sendRequest(String s) {
+        return CompletableFuture.supplyAsync(() -> {
             try {
-                out.writeBytes(STR."\{s}\n");
-//            out.flush();
-                // 异步接收服务器的响应
-                CompletableFuture.runAsync(() -> {
-                    try {
-//                    String response = b_iStream.readLine();
-                        String response = in.readUTF();
-                        future.complete(response);
-//                    future.complete(Response.getStatusString(response) + ": " + Response.getMessageString(response) + " " + Response.getMeaningsString(response));
-                    } catch (IOException e) {
-                        future.completeExceptionally(e);
-                    }
-                });
-
+                out.write((s + "\n").getBytes());
+                out.flush();
+                System.out.println(STR."Request sent: \{s}");
+                return true;
             } catch (IOException e) {
-                int choice = JOptionPane.showConfirmDialog(ui,
-                        STR."\{e.getMessage()}Connection error, press yes to retry, no to exit",
-                        "Fail",
-                        JOptionPane.YES_NO_OPTION);
-                if (choice == JOptionPane.YES_OPTION) {
-                    try {
-//                    disconnect();
-                        connect();
-                        JOptionPane.showMessageDialog(ui,
-                                "Connection re-established",
-                                "Success",
-                                JOptionPane.INFORMATION_MESSAGE);
-                        return sendRequest(s);
-                    } catch (IOException ioException) {
-                        return connectionError(ioException.getMessage(), s);
-                    }
-                } else {
-                    exit(1);
-                }
+//                SwingUtilities.invokeLater(() -> connectionError(e.getMessage()));
+                SwingUtilities.invokeLater(() -> {connectionError(e.getMessage(),s);});
 
+                return false;
             }
-            return future;
+        }, executor).thenApplyAsync(success -> {
+            try {
+                String res = b_iStream.readLine();
+//                System.out.println(STR."Response received: \{res}");
+                return res;
+            } catch (IOException e) {
+                System.out.println(STR."Connection error: \{e.getMessage()}");
+            }
+            return "";
+        }, executor).exceptionally(e -> {
+            System.out.println(STR."Connection error: \{e.getMessage()}");
+            return "";
+        });
     }
+
 
     @Override
     public void run() {
@@ -128,7 +111,7 @@ public class Client implements Runnable {
     //非请求积压式重连 Non-request backlog reconnection
     public void connectionError(String msg) {
         int choice = JOptionPane.showConfirmDialog(ui,
-                STR."Connection error: \{msg}, press yes to retry, no to exit",
+                STR."Connection error: \{msg}. Press Yes to retry, No to exit",
                 "Error",
                 JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
@@ -149,7 +132,7 @@ public class Client implements Runnable {
     //请求积压 重连再发送 Request backlog reconnection
     public CompletableFuture<String> connectionError(String msg, String s) {
         int choice = JOptionPane.showConfirmDialog(ui,
-                STR."Connection error: \{msg}, press yes to retry, no to exit",
+                STR."Connection error: \{msg}, press Yes to retry, No to exit",
                 "Error",
                 JOptionPane.YES_NO_OPTION);
         if (choice == JOptionPane.YES_OPTION) {
@@ -159,9 +142,9 @@ public class Client implements Runnable {
                         "Connection re-established",
                         "Success",
                         JOptionPane.INFORMATION_MESSAGE);
-                return sendRequest(s);
+                return null;
             } catch (IOException e) {
-                connectionError(e.getMessage(),s);
+                return connectionError(e.getMessage(), s);
             }
         } else {
             exit(1);
@@ -183,6 +166,7 @@ public class Client implements Runnable {
                 "Fail",
                 JOptionPane.ERROR_MESSAGE);
     }
+
     public void FailDialog(String msg, String title) {
         JOptionPane.showMessageDialog(ui,
                 msg,

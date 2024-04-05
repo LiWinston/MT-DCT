@@ -112,7 +112,6 @@ public class Dict {
 
     public Response add(String word, String meanings) {
         if (meanings.isEmpty()) {
-            // TODO: Log to client
             return new Response(false, "Meanings cannot be empty");
         }
         // Use computeIfAbsent to atomically add the word and its meanings to the dictionary
@@ -175,7 +174,7 @@ public class Dict {
         if (updatedMeanings != null) {
             String resMeanings = String.join(";", updatedMeanings);
             if (isNoNewMeaning.get())
-                return new Response(true, "No new meaning to update, everything remains", resMeanings);
+                return new Response(true, "No new meaning to update, everything remains: ", resMeanings);
             else return new Response(true, STR."Word \{word} updated successfully, New meanings: ", resMeanings);
         } else {
             return new Response(false, STR."Word \{word} Not Found, update failed");
@@ -185,14 +184,14 @@ public class Dict {
 
     // Method to save dictionary content to file
     public void saveToFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            for (Map.Entry<String, PriorityQueue<String>> entry : dictionary.entrySet()) {
-                writer.write(STR."\{entry.getKey()}:\{String.join(";", entry.getValue())}");
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            ServerLogger.logGeneralErr(STR."Error saving to file: \{e.getMessage()}");
-        }
+//        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+//            for (Map.Entry<String, PriorityQueue<String>> entry : dictionary.entrySet()) {
+//                writer.write(STR."\{entry.getKey()}:\{String.join(";", entry.getValue())}");
+//                writer.newLine();
+//            }
+//        } catch (IOException e) {
+//            ServerLogger.logGeneralErr(STR."Error saving to file: \{e.getMessage()}");
+//        }
     }
 
     void printDictionaryInfo() {

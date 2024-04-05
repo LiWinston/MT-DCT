@@ -11,44 +11,52 @@ import java.util.concurrent.CompletableFuture;
 
 import static java.lang.Thread.sleep;
 
-public class ConcurrentSingleClientParallelRequestSimulator {
+public class MultiUserConcurrentRequestSimulator {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final SecureRandom random = new SecureRandom();
 
     public static void main(String[] args) {
-        // 创建一个客户端实例
-        Client client = new Client();
-        client.address = "localhost"; // 设置服务器地址
-        client.port = 8600; // 设置服务器端口
+        // 设置服务器地址和端口
+        String address = "localhost";
+        int port = 8600;
 
-        // 连接服务器
-        try {
-            client.connect();
-        } catch (IOException e) {
-            System.out.println("Failed to connect to the server.");
-            return;
-        }
+        // 设置用户数量和每个用户发出请求的次数
+        int numUsers = 300;
+        int requestsPerUser = 2000;
 
+        // 创建多个用户并发发送请求
         List<CompletableFuture<Void>> futures = new ArrayList<>();
-
-        // chuan行发送请求
-        for (int i = 0; i < 1800; i++) {
+        for (int i = 0; i < numUsers; i++) {
             CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-                Request reqHdl = new Request();
-                String rs = reqHdl.createAddRequest(RandomString(), RandomStringArray());
-                CompletableFuture<String> rer = client.sendRequest(rs);
-                System.out.println("Response: " + rer.join());
+                try {
+                    // 创建一个客户端实例
+                    Client client = new Client();
+                    client.address = address;
+                    client.port = port;
+
+                    // 连接服务器
+                    client.connect();
+
+                    // 发送请求
+                    for (int j = 0; j < requestsPerUser; j++) {
+                        Request reqHdl = new Request();
+                        String rs = reqHdl.createAddRequest(RandomString(), RandomStringArray());
+                        CompletableFuture<String> rer = client.sendRequest(rs);
+                        System.out.println("User " + Thread.currentThread().getName() + " - Response:\n " + (rer.join()));
+                    }
+
+                    // 断开连接
+                    client.disconnect();
+                } catch (IOException e) {
+                    System.out.println("Failed to connect to the server.");
+                }
             });
             futures.add(future);
-
         }
 
-        // 等待所有请求完成
+        // 等待所有用户的请求完成
         CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
         allOf.join();
-
-        // 断开连接
-//        client.disconnect();
     }
 
     private static String[] RandomStringArray() {
