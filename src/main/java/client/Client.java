@@ -66,7 +66,7 @@ public class Client implements Runnable {
     }
 
 
-    protected CompletableFuture<String> sendRequest(String s) {
+    protected synchronized CompletableFuture<String> sendRequest(String s) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 out.write((s + "\n").getBytes());
