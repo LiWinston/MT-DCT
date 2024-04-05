@@ -39,3 +39,4 @@ build/
 .idea/misc.xml
 /.idea/copilot
 *.jar
+dictionary.txt

@@ -26,8 +26,11 @@ new FormModel {
 				"background": new java.awt.Color( 207, 204, 229, 48 )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
 			add( new FormComponent( "javax.swing.JCheckBox" ) {
-				name: "checkBox1"
-				"text": "text"
+				name: "EnableParenthesesCheckBox"
+				"text": "EnableParenthesesCheck"
+				"font": new com.jformdesigner.model.SwingDerivedFont( null, 131072, 2, false )
+				"selected": true
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "EnableParenthesesActionPerformed", true ) )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 				"gridx": 1
 			} )

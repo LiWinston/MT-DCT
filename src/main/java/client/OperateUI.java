@@ -205,10 +205,14 @@ public class OperateUI extends JPanel {
         }
     }
 
+    private void EnableParenthesesActionPerformed(ActionEvent e) {
+        enalbeParenthesesMatchCheck = EnableParenthesesCheckBox.isSelected();
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         searchTitle = new JTextField();
-        checkBox1 = new JCheckBox();
+        EnableParenthesesCheckBox = new JCheckBox();
         searchBar = new JTextField();
         searchButton = new JButton();
         meaningsSpace = new JScrollPane();
@@ -238,10 +242,13 @@ public class OperateUI extends JPanel {
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 0, 5, 5), 0, 0));
 
-        //---- checkBox1 ----
-        checkBox1.setText("text");
-        checkBox1.setName("checkBox1");
-        add(checkBox1, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+        //---- EnableParenthesesCheckBox ----
+        EnableParenthesesCheckBox.setText("EnableParenthesesCheck");
+        EnableParenthesesCheckBox.setFont(EnableParenthesesCheckBox.getFont().deriveFont(EnableParenthesesCheckBox.getFont().getStyle() & ~Font.ITALIC, EnableParenthesesCheckBox.getFont().getSize() + 2f));
+        EnableParenthesesCheckBox.setSelected(true);
+        EnableParenthesesCheckBox.setName("EnableParenthesesCheckBox");
+        EnableParenthesesCheckBox.addActionListener(e -> EnableParenthesesActionPerformed(e));
+        add(EnableParenthesesCheckBox, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(0, 0, 5, 0), 0, 0));
 
@@ -328,7 +335,7 @@ public class OperateUI extends JPanel {
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     private JTextField searchTitle;
-    private JCheckBox checkBox1;
+    private JCheckBox EnableParenthesesCheckBox;
     private JTextField searchBar;
     private JButton searchButton;
     private JScrollPane meaningsSpace;
