@@ -37,6 +37,13 @@ public class ServerThread implements Runnable {
                     // Process the request
                     if (action != null) {
                         String word = localReqHdl.getWord(req);
+                        if (word == null || word.isEmpty() || word.isBlank()) {
+                            Response res = new Response(false, "Invalid request, word empty\n");
+                            out.write((res.toResponse() + "\n").getBytes());
+                            out.flush();
+                            System.out.println(STR."Response sent: \{res.toResponse()}");
+                            continue;
+                        }
                         switch (action) {
                             case ADD:
                                 executor.submit(() -> {
