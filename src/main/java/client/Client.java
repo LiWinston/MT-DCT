@@ -70,36 +70,46 @@ public class Client implements Runnable {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 out.writeBytes(STR + s + "\n");
-
-                String response = in.readUTF();
-
-                return response;
+                return true;
             } catch (IOException e) {
                 System.out.println("Kazhele");
-
-                int choice = JOptionPane.showConfirmDialog(ui,
-                        " Connection error, press yes to retry, no to exit",
-                        "Fail",
-                        JOptionPane.YES_NO_OPTION);
-                if (choice == JOptionPane.YES_OPTION) {
-                    try {
-                        connect();
-                        System.out.println("Kazhele 1");
-                        JOptionPane.showMessageDialog(ui,
-                                "Connection re-established",
-                                "Success",
-                                JOptionPane.INFORMATION_MESSAGE);
-                        return sendRequest(s).join(); // 重新发送请求并等待结果
-                    } catch (IOException ioException) {
-                        System.out.println("Kazhele 2");
-                        return connectionError(ioException.getMessage(), s).join();
+                SwingUtilities.invokeLater(() -> {
+                    int choice = JOptionPane.showConfirmDialog(ui,
+                            " Connection error, press yes to retry, no to exit",
+                            "Fail",
+                            JOptionPane.YES_NO_OPTION);
+                    if (choice == JOptionPane.YES_OPTION) {
+                        try {
+                            connect();
+                            System.out.println("Kazhele 1");
+                            JOptionPane.showMessageDialog(ui,
+                                    "Connection re-established",
+                                    "Success",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                            sendRequest(s);
+                        } catch (IOException ioException) {
+                            System.out.println("Kazhele 2");
+                            connectionError(ioException.getMessage(), s);
+                        }
+                    } else {
+                        exit(1);
                     }
-                } else {
-                    exit(1);
-                    return null;
-                }
+                });
+                return false;
             }
-        }, executor);
+        }, executor).thenApplyAsync(success -> {
+            try {
+                String response = in.readUTF();
+                return response;
+            } catch (IOException e) {
+                throw new CompletionException(e);
+            }
+        }, executor).exceptionally(e -> {
+            SwingUtilities.invokeLater(() -> {
+                connectionError(e.getMessage(), s);
+            });
+            return null;
+        });
     }
 
 
