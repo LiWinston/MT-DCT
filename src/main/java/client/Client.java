@@ -5,10 +5,7 @@ import prtc.Request;
 import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import static java.lang.System.exit;
 
@@ -69,48 +66,42 @@ public class Client implements Runnable {
     }
 
 
-    protected CompletableFuture<String> sendRequest(String s){
-
-            CompletableFuture<String> future = new CompletableFuture<>();
+    protected CompletableFuture<String> sendRequest(String s) {
+        return CompletableFuture.supplyAsync(() -> {
             try {
-                out.writeBytes(STR."\{s}\n");
-//            out.flush();
-                // 异步接收服务器的响应
-                CompletableFuture.runAsync(() -> {
-                    try {
-//                    String response = b_iStream.readLine();
-                        String response = in.readUTF();
-                        future.complete(response);
-//                    future.complete(Response.getStatusString(response) + ": " + Response.getMessageString(response) + " " + Response.getMeaningsString(response));
-                    } catch (IOException e) {
-                        future.completeExceptionally(e);
-                    }
-                });
+                out.writeBytes(STR + s + "\n");
 
+                String response = in.readUTF();
+
+                return response;
             } catch (IOException e) {
+                System.out.println("Kazhele");
+
                 int choice = JOptionPane.showConfirmDialog(ui,
-                        STR."\{e.getMessage()}Connection error, press yes to retry, no to exit",
+                        " Connection error, press yes to retry, no to exit",
                         "Fail",
                         JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
                     try {
-//                    disconnect();
                         connect();
+                        System.out.println("Kazhele 1");
                         JOptionPane.showMessageDialog(ui,
                                 "Connection re-established",
                                 "Success",
                                 JOptionPane.INFORMATION_MESSAGE);
-                        return sendRequest(s);
+                        return sendRequest(s).join(); // 重新发送请求并等待结果
                     } catch (IOException ioException) {
-                        return connectionError(ioException.getMessage(), s);
+                        System.out.println("Kazhele 2");
+                        return connectionError(ioException.getMessage(), s).join();
                     }
                 } else {
                     exit(1);
+                    return null;
                 }
-
             }
-            return future;
+        }, executor);
     }
+
 
     @Override
     public void run() {
