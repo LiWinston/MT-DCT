@@ -5,6 +5,8 @@ import prtc.Response;
 
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ConcurrentSingleClientParallelRequestSimulator {
@@ -25,22 +27,22 @@ public class ConcurrentSingleClientParallelRequestSimulator {
             return;
         }
 
-        String req = client.localReqHdl.createAddRequest(
-                RandomString(), RandomStringArray());
-        CompletableFuture<String> res = client.sendRequest(req);
-        System.out.println("Response: " + res.join());
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
 
+        // 并行发送请求
         for (int i = 0; i < 10; i++) {
-            Thread.ofVirtual().start(() -> {
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
                 Request reqHdl = new Request();
-//                String req = reqHdl.createAddRequest(RandomString(), RandomStringArray());
                 String rs = reqHdl.createAddRequest(RandomString(), RandomStringArray());
                 CompletableFuture<String> rer = client.sendRequest(rs);
-                System.out.println(STR."Response: \{Response.getMeaningsString(rer.join())}");
+                System.out.println("Response: " + Response.getMeaningsString(rer.join()));
             });
+            futures.add(future);
         }
 
-
+        // 等待所有请求完成
+        CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+        allOf.join();
 
         // 断开连接
         client.disconnect();
