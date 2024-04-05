@@ -25,6 +25,12 @@ new FormModel {
 				"cursor": new java.awt.Cursor( 0 )
 				"background": new java.awt.Color( 207, 204, 229, 48 )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
+			add( new FormComponent( "javax.swing.JCheckBox" ) {
+				name: "checkBox1"
+				"text": "text"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridx": 1
+			} )
 			add( new FormComponent( "javax.swing.JTextField" ) {
 				name: "searchBar"
 				"toolTipText": "Type your word here (Maximum 25 chars)"
