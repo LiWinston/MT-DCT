@@ -35,8 +35,8 @@ public class ConcurrentSingleClientParallelRequestSimulator {
 
         List<CompletableFuture<Void>> futures = new ArrayList<>();
 
-        // chuan行发送请求
-        for (int i = 0; i < 1800; i++) {
+
+        for (int i = 0; i < 20000000; i++) {
             CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
                 Request reqHdl = new Request();
                 String rs = reqHdl.createAddRequest(RandomString(), RandomStringArray());
