@@ -15,7 +15,11 @@ import java.util.concurrent.Executors;
 import static java.lang.System.exit;
 
 public class Client implements Runnable {
-    private final java.util.concurrent.ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+//    private final java.util.concurrent.ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+//    private final java.util.concurrent.ExecutorService executor_bkp = Executors.newVirtualThreadPerTaskExecutor();
+    private final java.util.concurrent.ExecutorService requestExecutor = Executors.newFixedThreadPool(30000);
+    private final java.util.concurrent.ExecutorService responseExecutor = Executors.newFixedThreadPool(30000);
+
     BufferedReader b_iStream;
     String address;
     int port;
@@ -70,11 +74,14 @@ public class Client implements Runnable {
     }
 
 
-    protected synchronized CompletableFuture<String> sendRequest(String s) {
+    protected CompletableFuture<String> sendRequest(String s) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                out.write((s + "\n").getBytes());
-                out.flush();
+                synchronized (this) {
+                    out.write((s + "\n").getBytes());
+                    out.flush();
+                    notify();
+                }
                 System.out.println(STR."Request sent: \{s}");
                 return true;
             } catch (IOException e) {
@@ -83,7 +90,7 @@ public class Client implements Runnable {
 
                 return false;
             }
-        }, executor).thenApplyAsync(success -> {
+        }, requestExecutor).thenApplyAsync(success -> {
             try {
                 String res = b_iStream.readLine();
 //                System.out.println(STR."Response received: \{res}");
@@ -92,7 +99,7 @@ public class Client implements Runnable {
                 System.out.println(STR."Connection error: \{e.getMessage()}");
             }
             return "";
-        }, executor).exceptionally(e -> {
+        }, responseExecutor).exceptionally(e -> {
             System.out.println(STR."Connection error: \{e.getMessage()}");
             return "";
         });
