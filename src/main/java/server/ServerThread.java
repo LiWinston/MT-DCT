@@ -1,3 +1,7 @@
+/**
+ * @Author: 1378156 Yongchun Li
+ */
+
 package server;
 
 import prtc.Request;
@@ -51,7 +55,11 @@ public class ServerThread implements Runnable {
                                     try {
                                         Response res = dict.add(word, meanings);
 //                                        out.writeChars (res.getMessage());
-                                        dict.saveToFile();
+                                        try{
+                                            dict.saveToFile();
+                                        }catch (IOException e){
+                                            res = new Response(false, "Data solidification failed\n");
+                                        }
                                         out.write((res.toResponse() + "\n").getBytes());
                                         out.flush();
                                         System.out.println(STR."Response sent: \{res.toResponse()}");
@@ -63,7 +71,11 @@ public class ServerThread implements Runnable {
                             case DELETE:
                                 executor.submit(() -> {
                                     Response res = dict.delete(word);
-                                    dict.saveToFile();
+                                    try {
+                                        dict.saveToFile();
+                                    } catch (IOException e) {
+                                        res = new Response(false, "Data solidification failed\n");
+                                    }
                                     try {
                                         out.write((res.toResponse() + "\n").getBytes());
                                         out.flush();
@@ -77,7 +89,11 @@ public class ServerThread implements Runnable {
                                 executor.submit(() -> {
                                     String meanings = localReqHdl.getMeanings(req);
                                     Response res = dict.update(word, meanings);
-                                    dict.saveToFile();
+                                    try {
+                                        dict.saveToFile();
+                                    } catch (IOException e) {
+                                        res = new Response(false, "Data solidification failed\n");
+                                    }
                                     try {
                                         out.write((res.toResponse() + "\n").getBytes());
                                         out.flush();

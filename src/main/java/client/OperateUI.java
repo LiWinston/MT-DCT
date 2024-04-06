@@ -1,6 +1,7 @@
-/*
- * Created by JFormDesigner on Thu Apr 08 08:35:13 CST 2021
+/**
+ * @Author: 1378156 Yongchun Li
  */
+
 
 package client;
 

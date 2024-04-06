@@ -1,3 +1,7 @@
+/**
+ * @Author: 1378156 Yongchun Li
+ */
+
 package server;
 
 import prtc.Response;
@@ -183,15 +187,13 @@ public class Dict {
 
 
     // Method to save dictionary content to file
-    public void saveToFile() {
-//        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-//            for (Map.Entry<String, PriorityQueue<String>> entry : dictionary.entrySet()) {
-//                writer.write(STR."\{entry.getKey()}:\{String.join(";", entry.getValue())}");
-//                writer.newLine();
-//            }
-//        } catch (IOException e) {
-//            ServerLogger.logGeneralErr(STR."Error saving to file: \{e.getMessage()}");
-//        }
+    public void saveToFile() throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            for (Map.Entry<String, PriorityQueue<String>> entry : dictionary.entrySet()) {
+                writer.write(STR."\{entry.getKey()}:\{String.join(";", entry.getValue())}");
+                writer.newLine();
+            }
+        }
     }
 
     void printDictionaryInfo() {
@@ -204,7 +206,11 @@ public class Dict {
 
     // Method to close the dictionary and save content to file
     public void close() {
-        saveToFile();
+        try {
+            saveToFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
