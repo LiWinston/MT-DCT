@@ -233,7 +233,7 @@ public class OperateUI extends JPanel {
             new Insets(0, 0, 5, 0), 0, 0));
 
         //---- searchBar ----
-        searchBar.setToolTipText("Type your word here (Maximum 25 chars)");
+        searchBar.setToolTipText(STR."Type your word here (Maximum \{MAX_WORD_LENGTH} chars)");
         searchBar.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 36));
         searchBar.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
         searchBar.setName("searchBar");
