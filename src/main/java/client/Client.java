@@ -15,10 +15,10 @@ import java.util.concurrent.Executors;
 import static java.lang.System.exit;
 
 public class Client implements Runnable {
-//    private final java.util.concurrent.ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
-//    private final java.util.concurrent.ExecutorService executor_bkp = Executors.newVirtualThreadPerTaskExecutor();
-    private final java.util.concurrent.ExecutorService requestExecutor = Executors.newFixedThreadPool(30000);
-    private final java.util.concurrent.ExecutorService responseExecutor = Executors.newFixedThreadPool(30000);
+    private final java.util.concurrent.ExecutorService requestExecutor = Executors.newVirtualThreadPerTaskExecutor();
+    private final java.util.concurrent.ExecutorService responseExecutor = Executors.newVirtualThreadPerTaskExecutor();
+//    private final java.util.concurrent.ExecutorService requestExecutor = Executors.newFixedThreadPool(30000);
+//    private final java.util.concurrent.ExecutorService responseExecutor = Executors.newFixedThreadPool(30000);
 
     BufferedReader b_iStream;
     String address;

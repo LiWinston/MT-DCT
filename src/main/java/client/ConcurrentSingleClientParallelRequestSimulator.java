@@ -51,8 +51,7 @@ public class ConcurrentSingleClientParallelRequestSimulator {
         CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
         allOf.join();
 
-        // 断开连接
-//        client.disconnect();
+        client.disconnect();
     }
 
     private static String[] RandomStringArray() {
